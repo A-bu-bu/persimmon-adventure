@@ -85,20 +85,25 @@ export class HUD {
     ctx.font = 'bold 12px "Microsoft JhengHei", "PingFang TC", sans-serif';
     ctx.fillText(`${this.weaponIcons[player.weapon]} ${this.weaponNames[player.weapon]}`, wepX + 8, wepY + 18);
 
-    // --- TOP-RIGHT: SCORE, COINS & LEVEL ---
+    // --- TOP-RIGHT: SCORE, COINS & LEVEL (下移避開頂部工具列按鈕) ---
     const rightX = camera.viewportWidth - 20;
+    const infoStartY = 56;
 
     ctx.textAlign = 'right';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowBlur = 5;
+
     // Level Title
     ctx.fillStyle = '#ffcc00';
     ctx.font = 'bold 15px "Microsoft JhengHei", "PingFang TC", sans-serif';
-    ctx.fillText(currentLevel.name, rightX, startY + 10);
+    ctx.fillText(currentLevel.name, rightX, infoStartY);
 
     // Coins & Score
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px "Microsoft JhengHei", "PingFang TC", sans-serif';
-    ctx.fillText(`🪙 甜柿金幣: ${player.coins}`, rightX, startY + 32);
-    ctx.fillText(`⭐ 得分: ${player.score}`, rightX, startY + 52);
+    ctx.font = 'bold 13px "Microsoft JhengHei", "PingFang TC", sans-serif';
+    ctx.fillText(`🪙 甜柿金幣: ${player.coins}`, rightX, infoStartY + 22);
+    ctx.fillText(`⭐ 得分: ${player.score}`, rightX, infoStartY + 42);
+    ctx.shadowBlur = 0;
 
     // --- BOSS HEALTH BAR (When in Boss Stage) ---
     if (boss && (boss.active || boss.isDead)) {
