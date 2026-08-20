@@ -226,9 +226,13 @@ class Game {
       (e) => new Enemy(e.x, e.y, e.type)
     );
 
-    // Boss (Level 3)
+    // Boss (Level 3 & Level 6)
     if (this.currentLevel.hasBoss) {
-      this.boss = new Boss(this.currentLevel.bossStart.x, this.currentLevel.bossStart.y);
+      this.boss = new Boss(
+        this.currentLevel.bossStart.x,
+        this.currentLevel.bossStart.y,
+        this.currentLevel.bossOptions || {}
+      );
       audio.playBGM('boss');
     } else {
       this.boss = null;
@@ -341,9 +345,13 @@ class Game {
             if (b.pierce <= 0) b.active = false;
 
             if (this.boss.isDead) {
-              this.player.score += 5000;
+              this.player.score += this.boss.isFinalBoss ? 10000 : 5000;
               setTimeout(() => {
-                this.setState('GAME_COMPLETE');
+                if (this.currentLevelIndex + 1 < LEVELS.length) {
+                  this.setState('LEVEL_CLEAR');
+                } else {
+                  this.setState('GAME_COMPLETE');
+                }
               }, 2500);
             }
           }

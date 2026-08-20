@@ -6,23 +6,25 @@ import { Bullet } from './bullet.js';
 import { Enemy } from './enemy.js';
 
 export class Boss {
-  constructor(x, y) {
+  constructor(x, y, options = {}) {
     this.x = x;
     this.y = y;
-    this.width = 90;
-    this.height = 70;
+    this.name = options.name || '貪吃蟲魔王';
+    this.isFinalBoss = options.isFinalBoss || false;
+    this.maxHp = options.hp || 35;
+    this.hp = this.maxHp;
+    this.width = options.width || (this.isFinalBoss ? 110 : 90);
+    this.height = options.height || (this.isFinalBoss ? 85 : 70);
     this.vx = 0;
     this.vy = 0;
     this.facing = -1;
 
-    this.maxHp = 35;
-    this.hp = 35;
     this.active = true;
     this.isDead = false;
     this.hitTimer = 0;
     this.animTimer = 0;
 
-    // AI States: 'APPEAR', 'IDLE', 'CHARGE', 'JUMP_SLAM', 'BURST', 'LASER', 'ENRAGED_ROAR'
+    // AI States: 'APPEAR', 'IDLE', 'CHARGE', 'JUMP_SLAM', 'BURST', 'SUMMON', 'ENRAGED_ROAR'
     this.state = 'APPEAR';
     this.stateTimer = 2.0;
     this.isEnraged = false;
@@ -150,12 +152,13 @@ export class Boss {
         break;
 
       case 'BURST':
-        // Fire 5-way needle spread
+        // Fire needle spread (7-way if final boss, 5-way if regular boss)
         this.vx = 0;
         if (this.stateTimer <= 0.6 && this.stateTimer > 0.4) {
-          for (let angleDeg of [-40, -20, 0, 20, 40]) {
+          const angles = this.isFinalBoss ? [-50, -32, -16, 0, 16, 32, 50] : [-40, -20, 0, 20, 40];
+          for (let angleDeg of angles) {
             const rad = ((this.facing === 1 ? 0 : 180) + angleDeg) * (Math.PI / 180);
-            const speed = 240 * speedMultiplier;
+            const speed = (this.isFinalBoss ? 280 : 240) * speedMultiplier;
             bullets.push(
               new Bullet(
                 this.x + this.width / 2,
@@ -169,18 +172,22 @@ export class Boss {
             );
           }
           audio.playShoot(0);
-          particles.createHitSparks(this.x + this.width / 2, this.y + this.height / 2, 10, '#ff2a6d');
+          particles.createHitSparks(this.x + this.width / 2, this.y + this.height / 2, 12, '#ff2a6d');
           this.state = 'IDLE';
-          this.stateTimer = 1.0 / speedMultiplier;
+          this.stateTimer = (this.isFinalBoss ? 0.7 : 1.0) / speedMultiplier;
         }
         break;
 
       case 'SUMMON':
-        // Spawn 2 flying bats to harass the player
+        // Spawn minions to harass the player
         this.vx = 0;
-        if (enemies.length < 5) {
+        if (enemies.length < 6) {
           enemies.push(new Enemy(this.x + (Math.random() * 40 - 20), this.y - 40, 'flyer'));
-          enemies.push(new Enemy(this.x + (Math.random() * 40 - 20), this.y - 40, 'crawler'));
+          if (this.isFinalBoss) {
+            enemies.push(new Enemy(this.x + (Math.random() * 40 - 20), this.y - 40, 'turret'));
+          } else {
+            enemies.push(new Enemy(this.x + (Math.random() * 40 - 20), this.y - 40, 'crawler'));
+          }
         }
         audio.playEnemyDie();
         particles.createExplosion(this.x + this.width / 2, this.y, 15, '#7a3e8c');
@@ -219,12 +226,30 @@ export class Boss {
     ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
     ctx.scale(this.facing, 1);
 
-    const bodyColor = this.isEnraged ? '#c42020' : '#4f8c28';
-    const highlightColor = this.isEnraged ? '#ff5533' : '#8cd948';
+    const bodyColor = this.isFinalBoss
+      ? (this.isEnraged ? '#800040' : '#4b1d6e')
+      : (this.isEnraged ? '#c42020' : '#4f8c28');
+    const highlightColor = this.isFinalBoss
+      ? (this.isEnraged ? '#ff0077' : '#9c38d9')
+      : (this.isEnraged ? '#ff5533' : '#8cd948');
     const eyeColor = this.isEnraged ? '#ffff00' : '#ff1155';
 
     // Giant Caterpillar / Beetle Armor Segments
     const breathe = Math.sin(this.animTimer * 6) * 3;
+
+    // Final Boss Cosmic Aura Wings
+    if (this.isFinalBoss) {
+      ctx.save();
+      const wingFlap = Math.sin(this.animTimer * 12) * 0.3;
+      ctx.fillStyle = this.isEnraged ? 'rgba(255, 0, 100, 0.4)' : 'rgba(160, 60, 255, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(-15, -25 + breathe, 42, 18, -0.4 + wingFlap, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(-5, -30 + breathe, 36, 14, -0.2 + wingFlap, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // Tail / Rear Segments
     ctx.fillStyle = bodyColor;
@@ -239,7 +264,7 @@ export class Boss {
     ctx.fill();
 
     // Spiky Shell Plates on back
-    ctx.fillStyle = '#222';
+    ctx.fillStyle = this.isFinalBoss ? '#ffcc00' : '#222';
     for (let i = -30; i <= 10; i += 15) {
       ctx.beginPath();
       ctx.moveTo(i, -12 + breathe);
@@ -254,6 +279,21 @@ export class Boss {
     ctx.ellipse(22, 0 + breathe, 24, 24, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // Final Boss Imperial Crown
+    if (this.isFinalBoss) {
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = '#ffaa00';
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.moveTo(14, -20 + breathe);
+      ctx.lineTo(18, -36 + breathe);
+      ctx.lineTo(24, -24 + breathe);
+      ctx.lineTo(30, -38 + breathe);
+      ctx.lineTo(34, -20 + breathe);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
     // Large Glowing Eyes
     ctx.fillStyle = eyeColor;
     ctx.shadowColor = eyeColor;
@@ -264,7 +304,7 @@ export class Boss {
     ctx.shadowBlur = 0;
 
     // Glowing Horn / Mandible
-    ctx.fillStyle = '#ffaa00';
+    ctx.fillStyle = this.isFinalBoss ? '#ff0055' : '#ffaa00';
     ctx.beginPath();
     ctx.moveTo(36, 6 + breathe);
     ctx.lineTo(54, 2 + breathe);

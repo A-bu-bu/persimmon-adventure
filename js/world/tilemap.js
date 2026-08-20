@@ -44,6 +44,21 @@ export class Tilemap {
       skyGradient.addColorStop(0, '#151324');
       skyGradient.addColorStop(0.6, '#282348');
       skyGradient.addColorStop(1, '#4a3055');
+    } else if (this.theme === 'volcano') {
+      // Magma Volcano Ridge
+      skyGradient.addColorStop(0, '#2b0908');
+      skyGradient.addColorStop(0.5, '#731f13');
+      skyGradient.addColorStop(1, '#e65c00');
+    } else if (this.theme === 'sky') {
+      // Celestial Sky Canopy
+      skyGradient.addColorStop(0, '#0c1b33');
+      skyGradient.addColorStop(0.5, '#1e3c72');
+      skyGradient.addColorStop(1, '#64b3f4');
+    } else if (this.theme === 'final_boss') {
+      // Cosmic Ancient Divine Tree Arena
+      skyGradient.addColorStop(0, '#0a001a');
+      skyGradient.addColorStop(0.5, '#3b0d60');
+      skyGradient.addColorStop(1, '#9b1d70');
     } else {
       // Boss Arena (Dramatic Crimson & Gold Sunset)
       skyGradient.addColorStop(0, '#1e0c1b');
@@ -54,20 +69,23 @@ export class Tilemap {
     ctx.fillStyle = skyGradient;
     ctx.fillRect(camera.x, camera.y, w, h);
 
-    // --- DISTANT PERSIMMON SUN / MOON ---
+    // --- DISTANT SUN / CELESTIAL ORB ---
     ctx.save();
-    ctx.fillStyle = '#ffb347';
-    ctx.shadowColor = '#ffa500';
+    const sunColor = this.theme === 'sky' ? '#e0f7fa' : (this.theme === 'volcano' ? '#ff3300' : (this.theme === 'final_boss' ? '#ffd700' : '#ffb347'));
+    const shadowColor = this.theme === 'sky' ? '#80deea' : (this.theme === 'volcano' ? '#ff6600' : (this.theme === 'final_boss' ? '#ff00aa' : '#ffa500'));
+    ctx.fillStyle = sunColor;
+    ctx.shadowColor = shadowColor;
     ctx.shadowBlur = 24;
     const sunX = camera.x + w * 0.75 - (camera.x * 0.05);
     const sunY = camera.y + 90 - (camera.y * 0.03);
     ctx.beginPath();
-    ctx.arc(sunX, sunY, 36, 0, Math.PI * 2);
+    ctx.arc(sunX, sunY, this.theme === 'final_boss' ? 44 : 36, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // --- PARALLAX MOUNTAINS / HILLS LAYER 1 (Far) ---
-    ctx.fillStyle = this.theme === 'orchard' ? '#592c4e' : '#221a36';
+    // --- PARALLAX MOUNTAINS / CLOUDS LAYER 1 (Far) ---
+    const farColor = this.theme === 'volcano' ? '#3d0c0c' : (this.theme === 'sky' ? 'rgba(255,255,255,0.25)' : (this.theme === 'final_boss' ? '#200533' : (this.theme === 'orchard' ? '#592c4e' : '#221a36')));
+    ctx.fillStyle = farColor;
     const farOffset = camera.x * 0.15;
     ctx.beginPath();
     ctx.moveTo(camera.x, camera.y + h);
@@ -80,8 +98,9 @@ export class Tilemap {
     ctx.lineTo(camera.x + w, camera.y + h);
     ctx.fill();
 
-    // --- PARALLAX ORCHARD TREES LAYER 2 (Mid) ---
-    ctx.fillStyle = this.theme === 'orchard' ? '#3d2040' : '#171226';
+    // --- PARALLAX LAYER 2 (Mid) ---
+    const midColor = this.theme === 'volcano' ? '#260606' : (this.theme === 'sky' ? 'rgba(255,255,255,0.45)' : (this.theme === 'final_boss' ? '#120220' : (this.theme === 'orchard' ? '#3d2040' : '#171226')));
+    ctx.fillStyle = midColor;
     const midOffset = camera.x * 0.35;
     ctx.beginPath();
     ctx.moveTo(camera.x, camera.y + h);
@@ -113,34 +132,41 @@ export class Tilemap {
 
         ctx.save();
         if (tileType === 1) {
-          // Grass Top Ground Block
-          ctx.fillStyle = '#633e2b';
+          // Top Ground Block
+          const baseColor = this.theme === 'volcano' ? '#2b1810' : (this.theme === 'sky' ? '#1d3557' : (this.theme === 'final_boss' ? '#2b1035' : '#633e2b'));
+          const topColor = this.theme === 'volcano' ? '#ff6600' : (this.theme === 'sky' ? '#48cae4' : (this.theme === 'final_boss' ? '#bf40bf' : '#6cb738'));
+          const fringeColor = this.theme === 'volcano' ? '#ff9900' : (this.theme === 'sky' ? '#90e0ef' : (this.theme === 'final_boss' ? '#df73df' : '#8bd64e'));
+
+          ctx.fillStyle = baseColor;
           ctx.fillRect(posX, posY, ts, ts);
 
-          // Lush Green Top Grass
-          ctx.fillStyle = '#6cb738';
+          ctx.fillStyle = topColor;
           ctx.fillRect(posX, posY, ts, 6);
-          // Grass fringe
-          ctx.fillStyle = '#8bd64e';
+          ctx.fillStyle = fringeColor;
           for (let i = 0; i < ts; i += 6) {
             ctx.fillRect(posX + i, posY + 6, 4, 3);
           }
         } else if (tileType === 2) {
-          // Deep Soil / Rock
-          ctx.fillStyle = '#4a2d1f';
-          ctx.fillRect(posX, posY, ts, ts);
+          // Deep Soil / Rock / Obsidian
+          const rockColor = this.theme === 'volcano' ? '#1a0d0a' : (this.theme === 'sky' ? '#14213d' : (this.theme === 'final_boss' ? '#190822' : '#4a2d1f'));
+          const innerColor = this.theme === 'volcano' ? '#0d0605' : (this.theme === 'sky' ? '#0b1320' : (this.theme === 'final_boss' ? '#0f0414' : '#392116'));
 
-          ctx.fillStyle = '#392116';
+          ctx.fillStyle = rockColor;
+          ctx.fillRect(posX, posY, ts, ts);
+          ctx.fillStyle = innerColor;
           ctx.fillRect(posX + 4, posY + 4, ts - 8, ts - 8);
         } else if (tileType === 3) {
-          // One-Way Wooden Platform
-          ctx.fillStyle = '#9c6a38';
+          // One-Way Wooden/Cloud Platform
+          const platColor = this.theme === 'sky' ? '#e0fbfc' : (this.theme === 'volcano' ? '#ba5d2c' : '#9c6a38');
+          const platInner = this.theme === 'sky' ? '#98c1d9' : (this.theme === 'volcano' ? '#782d12' : '#734b22');
+          ctx.fillStyle = platColor;
           ctx.fillRect(posX, posY, ts, 8);
-          ctx.fillStyle = '#734b22';
+          ctx.fillStyle = platInner;
           ctx.fillRect(posX + 2, posY + 2, ts - 4, 4);
         } else if (tileType === 4) {
-          // Spike Trap (Thorns)
-          ctx.fillStyle = '#d43535';
+          // Spike Trap (Thorns / Magma Spikes / Energy Spikes)
+          const spikeColor = this.theme === 'volcano' ? '#ff3300' : (this.theme === 'sky' ? '#00f0ff' : (this.theme === 'final_boss' ? '#ff0066' : '#d43535'));
+          ctx.fillStyle = spikeColor;
           for (let i = 0; i < ts; i += 8) {
             ctx.beginPath();
             ctx.moveTo(posX + i, posY + ts);
@@ -149,10 +175,10 @@ export class Tilemap {
             ctx.fill();
           }
         } else if (tileType === 5) {
-          // Stone Block
-          ctx.fillStyle = '#545466';
+          // Stone Block / Boundary
+          ctx.fillStyle = this.theme === 'volcano' ? '#331a1a' : '#545466';
           ctx.fillRect(posX, posY, ts, ts);
-          ctx.fillStyle = '#3a3a47';
+          ctx.fillStyle = this.theme === 'volcano' ? '#220d0d' : '#3a3a47';
           ctx.strokeRect(posX + 1, posY + 1, ts - 2, ts - 2);
         }
         ctx.restore();

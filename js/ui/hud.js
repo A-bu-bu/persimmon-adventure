@@ -114,7 +114,7 @@ export class HUD {
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 4;
       ctx.fillText(
-        `👑 貪吃蟲魔王 - 泰坦巨蠶 ${boss.isEnraged ? '(狂暴模式!)' : ''}`,
+        `👑 ${boss.name || '魔王'} ${boss.isEnraged ? '(狂暴模式!)' : ''}`,
         camera.viewportWidth / 2,
         bossBarY - 6
       );
