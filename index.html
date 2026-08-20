@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="柿柿順利">
+  <meta name="theme-color" content="#ff7700">
+  <meta name="description" content="超萌背柿小勇士的 2D 動作平台跳躍冒險遊戲！收集甜柿、釋放果籽彈、挑戰魔王！">
+  <title>柿柿順利大冒險 - 2D 動作平台跳躍遊戲</title>
+  
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" href="./icons/favicon.png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/style.css?v=3">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Utility Toolbar -->
+    <div id="top-bar">
+      <button id="btn-pwa-install" class="tool-btn" style="display: none;">📥 安裝遊戲 App</button>
+      <button id="btn-toggle-touch" class="tool-btn">🎮 觸控搖桿: 關</button>
+      <button id="btn-toggle-sound" class="tool-btn">🔊 音效: 開</button>
+      <button id="btn-how-to-play" class="tool-btn">❓ 玩法說明</button>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="game-container">
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- On-Screen Touch Controls (Mobile Friendly) -->
+      <div id="touch-controls">
+        <!-- D-Pad (Left Side) -->
+        <div class="dpad-container">
+          <div id="touch-up" class="dpad-btn">▲</div>
+          <div id="touch-left" class="dpad-btn">◀</div>
+          <div id="touch-right" class="dpad-btn">▶</div>
+          <div id="touch-down" class="dpad-btn">▼</div>
+        </div>
+
+        <!-- Action Cluster (Right Side) -->
+        <div class="action-container">
+          <div id="touch-switch" class="action-btn">🔄<span>換武</span></div>
+          <div id="touch-dash" class="action-btn">💨<span>衝刺</span></div>
+          <div id="touch-shoot" class="action-btn">🌰<span>射擊</span></div>
+          <div id="touch-jump" class="action-btn">⬆️<span>跳躍</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- START MENU MODAL (含遊戲說明) -->
+    <div id="modal-start" class="overlay-modal" style="display: flex;">
+      <div class="modal-content start-modal-content">
+        <div class="start-header">
+          <img src="./assets/hero_transparent.png" alt="背柿小勇士" class="hero-banner">
+          <div>
+            <h1 class="game-title">柿柿順利大冒險</h1>
+            <p class="game-subtitle">元氣背柿小勇士出發！擊敗害蟲魔王、保衛果園豐收！</p>
+          </div>
+        </div>
+
+        <!-- 遊戲說明與玩法卡片 -->
+        <div class="guide-box">
+          <h3 class="guide-box-title">📖 遊戲玩法與操作指南</h3>
+          
+          <div class="guide-grid">
+            <div class="guide-card">
+              <div class="card-header"><span class="card-icon">🏃</span> <strong>左右移動</strong></div>
+              <p class="card-desc"><span class="key-badge">A</span> <span class="key-badge">D</span> 或 <span class="key-badge">←</span> <span class="key-badge">→</span>（手機左側 ◀ / ▶）</p>
+            </div>
+            <div class="guide-card highlight-card">
+              <div class="card-header"><span class="card-icon">⬆️</span> <strong>跳躍 / 二段跳</strong></div>
+              <p class="card-desc"><span class="key-badge">Space</span> 或 <span class="key-badge">W</span>（<b>空中再按一次可觸發二段跳！</b>）</p>
+            </div>
+            <div class="guide-card highlight-card">
+              <div class="card-header"><span class="card-icon">🌰</span> <strong>發射果籽彈</strong></div>
+              <p class="card-desc"><span class="key-badge">J</span> 或 <span class="key-badge">X</span>（<b>可直接開槍擊落敵人的紅色子彈！</b>）</p>
+            </div>
+            <div class="guide-card highlight-card">
+              <div class="card-header"><span class="card-icon">💨</span> <strong>無敵空中衝刺</strong></div>
+              <p class="card-desc"><span class="key-badge">L</span> 或 <span class="key-badge">Shift</span>（<b>衝刺期間無敵，可穿越子彈與深坑</b>）</p>
+            </div>
+            <div class="guide-card">
+              <div class="card-header"><span class="card-icon">🔄</span> <strong>切換武器型態</strong></div>
+              <p class="card-desc"><span class="key-badge">Q</span> / <span class="key-badge">E</span>（1:果籽彈 2:三向散射 3:<b>長按蓄力巨砲</b>）</p>
+            </div>
+            <div class="guide-card">
+              <div class="card-header"><span class="card-icon">🎯</span> <strong>通關目標</strong></div>
+              <p class="card-desc">採摘甜柿金幣，消滅害蟲並戰勝第 3 關魔王抵達傳送門！</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-start-game" class="primary-btn">🍊 我知道了，開始冒險！ (Start Game)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY / HELP MODAL -->
+    <div id="modal-help" class="overlay-modal">
+      <div class="modal-content" style="max-width: 580px;">
+        <h1 class="game-title" style="font-size: 26px;">🎮 操作方式與秘訣</h1>
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>動作</th>
+              <th>電腦鍵盤 / 手把</th>
+              <th>手機觸控</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>左右移動</td>
+              <td><span class="key-badge">A</span> <span class="key-badge">D</span> 或 <span class="key-badge">←</span> <span class="key-badge">→</span></td>
+              <td>左側 ◀ / ▶</td>
+            </tr>
+            <tr>
+              <td>跳躍 / 蹬牆跳</td>
+              <td><span class="key-badge">W</span> <span class="key-badge">Space</span> <span class="key-badge">K</span></td>
+              <td>右側 ⬆️ 跳躍</td>
+            </tr>
+            <tr>
+              <td>下落穿越跳台</td>
+              <td><span class="key-badge">S</span> + <span class="key-badge">跳躍</span></td>
+              <td>▼ + ⬆️</td>
+            </tr>
+            <tr>
+              <td>發射甜柿彈</td>
+              <td><span class="key-badge">J</span> 或 <span class="key-badge">X</span> (可蓄力)</td>
+              <td>右側 🌰 射擊</td>
+            </tr>
+            <tr>
+              <td>無敵空中衝刺</td>
+              <td><span class="key-badge">L</span> <span class="key-badge">Shift</span> <span class="key-badge">C</span></td>
+              <td>右側 💨 衝刺</td>
+            </tr>
+            <tr>
+              <td>切換武器型態</td>
+              <td><span class="key-badge">Q</span> <span class="key-badge">E</span> 或 <span class="key-badge">1</span><span class="key-badge">2</span><span class="key-badge">3</span></td>
+              <td>右側 🔄 換武</td>
+            </tr>
+            <tr>
+              <td>暫停遊戲</td>
+              <td><span class="key-badge">Esc</span> 或 <span class="key-badge">P</span></td>
+              <td>右上選單</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="btn-group">
+          <button id="btn-close-help" class="secondary-btn">我知道了！關閉</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE MODAL -->
+    <div id="modal-pause" class="overlay-modal">
+      <div class="modal-content">
+        <h1 class="game-title" style="font-size: 28px;">⏸️ 遊戲暫停</h1>
+        <div class="btn-group">
+          <button id="btn-resume" class="primary-btn">繼續遊戲</button>
+          <button class="secondary-btn btn-return-menu">返回主選單</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVEL CLEAR MODAL -->
+    <div id="modal-level-clear" class="overlay-modal">
+      <div class="modal-content">
+        <h1 class="game-title" style="color: #a3ff44;">🎉 恭喜通關！柿柿順利！</h1>
+        <p class="game-subtitle">成功抵達豐收傳送門！小勇士柿氣大振！</p>
+        <div class="stats-panel">
+          <p id="level-clear-score">本關累積得分: 0</p>
+          <p id="level-clear-coins">收集甜柿金幣: 0</p>
+        </div>
+        <div class="btn-group">
+          <button id="btn-next-level" class="primary-btn">前往下一關 ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="modal-game-over" class="overlay-modal">
+      <div class="modal-content">
+        <h1 class="game-title" style="color: #ff3355;">💥 挑戰失敗！柿氣不減！</h1>
+        <p class="game-subtitle">別灰心！整裝待發，再來一次！</p>
+        <div class="btn-group">
+          <button id="btn-retry-level" class="primary-btn">🔄 重試本關</button>
+          <button class="secondary-btn btn-return-menu">返回主選單</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME COMPLETE MODAL -->
+    <div id="modal-game-complete" class="overlay-modal">
+      <div class="modal-content">
+        <img src="./assets/hero_transparent.png" alt="柿柿順利" class="hero-banner">
+        <h1 class="game-title" style="color: #ffe066;">🏆 大吉大利！柿柿順利！</h1>
+        <p class="game-subtitle">你成功擊敗了貪吃蟲魔王！保衛了果園的豐收！</p>
+        <div class="stats-panel">
+          <p id="final-score-val">最終總分: 0</p>
+          <p id="final-coins-val">總收集甜柿: 0</p>
+        </div>
+        <div class="btn-group">
+          <button id="btn-play-again" class="primary-btn">🌟 再玩一次 (Play Again)</button>
+          <button class="secondary-btn btn-return-menu">返回主選單</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Scripts -->
+  <script type="module" src="./js/main.js?v=3"></script>
+</body>
+</html>
