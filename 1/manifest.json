@@ -1,0 +1,30 @@
+{
+  "name": "柿柿順利大冒險",
+  "short_name": "柿柿順利",
+  "description": "超萌背柿小勇士的 2D 動作平台跳躍冒險遊戲！收集甜柿、釋放果籽彈、挑戰魔王！",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#1a162b",
+  "theme_color": "#ff7700",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["games", "action", "arcade"]
+}
