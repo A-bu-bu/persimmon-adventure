@@ -5024,6 +5024,7 @@ import {
 
 class Game {
   constructor() {
+    console.log('[Game] Initializing Persimmon Adventure Engine...');
     this.canvas = document.getElementById('gameCanvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -5065,6 +5066,7 @@ class Game {
 
     // Start loop
     requestAnimationFrame((t) => this.loop(t));
+    console.log('[Game] Engine started successfully in state:', this.state);
   }
 
   setupWindowResize() {
@@ -5155,100 +5157,141 @@ class Game {
   }
 
   bindUIEvents() {
-    document.getElementById('btn-start-game')?.addEventListener('click', () => {
-      audio.resume();
-      this.startNewGame();
-    });
+    // Start Game Button
+    const startBtn = document.getElementById('btn-start-game');
+    if (startBtn) {
+      startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('[UI] Start Game Clicked');
+        audio.resume();
+        this.startNewGame();
+      });
+    }
 
-    document.getElementById('btn-continue-game')?.addEventListener('click', () => {
-      audio.resume();
-      const targetLvl = (saveManager.data.currentLevel || 1) - 1;
-      this.loadLevel(Math.min(LEVELS.length - 1, Math.max(0, targetLvl)));
-      this.setState('PLAYING');
-    });
+    // Continue Saved Game
+    const continueBtn = document.getElementById('btn-continue-game');
+    if (continueBtn) {
+      continueBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('[UI] Continue Game Clicked');
+        audio.resume();
+        const targetLvl = (saveManager.data.currentLevel || 1) - 1;
+        this.loadLevel(Math.min(LEVELS.length - 1, Math.max(0, targetLvl)));
+        this.setState('PLAYING');
+      });
+    }
 
+    // Level Select Modal
     const levelSelectModal = document.getElementById('modal-level-select');
-    document.getElementById('btn-open-level-select')?.addEventListener('click', () => {
+    document.getElementById('btn-open-level-select')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('[UI] Open Level Select Clicked');
       this.renderLevelSelectGrid();
       levelSelectModal.style.display = 'flex';
     });
-    document.getElementById('btn-close-level-select')?.addEventListener('click', () => {
+    document.getElementById('btn-close-level-select')?.addEventListener('click', (e) => {
+      e.preventDefault();
       levelSelectModal.style.display = 'none';
     });
 
+    // Mini-Games Modal
     const minigamesModal = document.getElementById('modal-minigames');
-    const openMiniGames = () => {
+    const openMiniGames = (e) => {
+      if (e) e.preventDefault();
+      console.log('[UI] Open Mini-Games Clicked');
       this.updateStartMenuState();
       minigamesModal.style.display = 'flex';
     };
     document.getElementById('btn-open-minigames')?.addEventListener('click', openMiniGames);
     document.getElementById('btn-open-minigames-top')?.addEventListener('click', openMiniGames);
-    document.getElementById('btn-close-minigames')?.addEventListener('click', () => {
+    document.getElementById('btn-close-minigames')?.addEventListener('click', (e) => {
+      if (e) e.preventDefault();
       minigamesModal.style.display = 'none';
     });
 
+    // Play Mini-Game Buttons
     document.querySelectorAll('.btn-play-minigame').forEach((btn) => {
       btn.addEventListener('click', (e) => {
+        e.preventDefault();
         const gameId = e.currentTarget.getAttribute('data-game');
+        console.log('[UI] Play Mini-Game Clicked:', gameId);
         minigamesModal.style.display = 'none';
         this.startMiniGame(gameId);
       });
     });
 
+    // Instructions Modal
     const helpModal = document.getElementById('modal-help');
-    document.getElementById('btn-how-to-play')?.addEventListener('click', () => {
+    document.getElementById('btn-how-to-play')?.addEventListener('click', (e) => {
+      e.preventDefault();
       helpModal.style.display = 'flex';
     });
-    document.getElementById('btn-close-help')?.addEventListener('click', () => {
+    document.getElementById('btn-close-help')?.addEventListener('click', (e) => {
+      e.preventDefault();
       helpModal.style.display = 'none';
     });
 
-    document.getElementById('btn-next-level')?.addEventListener('click', () => {
+    // Next Level Button
+    document.getElementById('btn-next-level')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.loadNextLevel();
     });
 
-    document.getElementById('btn-retry-level')?.addEventListener('click', () => {
+    // Retry Level Button
+    document.getElementById('btn-retry-level')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.loadLevel(this.currentLevelIndex);
       this.setState('PLAYING');
     });
 
-    document.getElementById('btn-play-again')?.addEventListener('click', () => {
+    // Play Again (After Game Complete)
+    document.getElementById('btn-play-again')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.startNewGame();
     });
 
+    // Audio Mute Toggle
     const soundBtn = document.getElementById('btn-toggle-sound');
-    soundBtn?.addEventListener('click', () => {
+    soundBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
       const isMuted = audio.toggleMute();
-      soundBtn.textContent = isMuted ? '?? ?單?: ?? : '?? ?單?: ??;
+      soundBtn.textContent = isMuted ? '🔇 音效: 關' : '🔊 音效: 開';
     });
 
-    document.getElementById('btn-resume')?.addEventListener('click', () => {
+    // Resume from Pause
+    document.getElementById('btn-resume')?.addEventListener('click', (e) => {
+      e.preventDefault();
       this.togglePause();
     });
 
+    // Return to Menu
     document.querySelectorAll('.btn-return-menu').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         audio.stopBGM();
         this.setState('MENU');
       });
     });
 
+    // Toggle Touch Controls Button
     const touchToggleBtn = document.getElementById('btn-toggle-touch');
     const touchOverlay = document.getElementById('touch-controls');
-    touchToggleBtn?.addEventListener('click', () => {
+    touchToggleBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
       if (touchOverlay.style.display === 'none') {
         touchOverlay.style.display = 'block';
-        touchToggleBtn.textContent = '? 閫豢?▼: ??;
+        touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
       } else {
         touchOverlay.style.display = 'none';
-        touchToggleBtn.textContent = '? 閫豢?▼: ??;
+        touchToggleBtn.textContent = '🎮 觸控搖桿: 關';
       }
     });
 
+    // Auto-detect mobile devices
     const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || ('ontouchstart' in window);
     if (isMobile && touchOverlay) {
       touchOverlay.style.display = 'block';
-      if (touchToggleBtn) touchToggleBtn.textContent = '? 閫豢?▼: ??;
+      if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
     }
   }
 
@@ -5266,7 +5309,7 @@ class Game {
       const card = document.createElement('div');
       card.className = `level-card-btn ${isUnlocked ? '' : 'locked'}`;
       card.innerHTML = `
-        <div class="level-card-num">${isUnlocked ? '蝚?' + lvlNum + ' ?? : '?? ??'}</div>
+        <div class="level-card-num">${isUnlocked ? '第 ' + lvlNum + ' 關' : '🔒 鎖定'}</div>
         <div class="level-card-name">${lvl.name}</div>
       `;
 
@@ -5305,11 +5348,14 @@ class Game {
 
   setState(newState) {
     this.state = newState;
+    console.log('[Game] State changed to:', newState);
 
+    // Hide all overlay modals
     document.querySelectorAll('.overlay-modal').forEach((modal) => {
       modal.style.display = 'none';
     });
 
+    // Show active modal
     if (newState === 'MENU') {
       this.updateStartMenuState();
       document.getElementById('modal-start').style.display = 'flex';
@@ -5318,14 +5364,14 @@ class Game {
       document.getElementById('modal-pause').style.display = 'flex';
     } else if (newState === 'LEVEL_CLEAR') {
       document.getElementById('modal-level-clear').style.display = 'flex';
-      document.getElementById('level-clear-score').textContent = `?祇?蝝舐?敺?: ${this.player.score}`;
-      document.getElementById('level-clear-coins').textContent = `?園???馳: ${this.player.coins}`;
+      document.getElementById('level-clear-score').textContent = `本關累積得分: ${this.player.score}`;
+      document.getElementById('level-clear-coins').textContent = `收集甜柿金幣: ${this.player.coins}`;
     } else if (newState === 'GAME_OVER') {
       document.getElementById('modal-game-over').style.display = 'flex';
     } else if (newState === 'GAME_COMPLETE') {
       document.getElementById('modal-game-complete').style.display = 'flex';
-      document.getElementById('final-score-val').textContent = `?蝯蜇?? ${this.player.score}`;
-      document.getElementById('final-coins-val').textContent = `蝮賣???? ${this.player.coins}`;
+      document.getElementById('final-score-val').textContent = `最終總分: ${this.player.score}`;
+      document.getElementById('final-coins-val').textContent = `總收集甜柿: ${this.player.coins}`;
     }
   }
 
@@ -5414,6 +5460,7 @@ class Game {
     }
   }
 
+  // --- GAME UPDATE & TICK ---
   update(dt) {
     if (this.state === 'MINIGAME' && this.currentMiniGame) {
       this.currentMiniGame.update(dt);
@@ -5454,7 +5501,7 @@ class Game {
       }
     }
 
-    // 4. Update Enemies & Check Player Stomp (頦抵銝?頦拇?
+    // 4. Update Enemies & Check Player Stomp (踩腳丫/踩怪)
     for (let i = this.enemies.length - 1; i >= 0; i--) {
       const e = this.enemies[i];
       e.update(dt, this.player, this.tilemap, this.bullets, this.camera);
@@ -5670,10 +5717,19 @@ class Game {
   }
 }
 
-// Instantiate Game on DOM Ready
-window.addEventListener('DOMContentLoaded', () => {
-  window.gameInstance = new Game();
-});
+// Robust Game Bootstrapper: Works whether DOM is loading or already loaded!
+function initPersimmonAdventure() {
+  if (!window.gameInstance) {
+    window.gameInstance = new Game();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPersimmonAdventure);
+} else {
+  initPersimmonAdventure();
+}
+
 })();
 </script>
 </body>

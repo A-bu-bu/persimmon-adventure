@@ -1,16 +1,17 @@
-const CACHE_NAME = 'persimmon-adventure-v3';
+const CACHE_NAME = 'persimmon-adventure-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './css/style.css?v=3',
-  './js/main.js?v=3',
+  './css/style.css?v=6',
+  './js/main.js?v=6',
   './js/pwa.js',
   './js/engine/audio.js',
   './js/engine/input.js',
   './js/engine/camera.js',
   './js/engine/physics.js',
   './js/engine/particles.js',
+  './js/engine/saveManager.js',
   './js/entities/player.js',
   './js/entities/bullet.js',
   './js/entities/enemy.js',
@@ -18,9 +19,11 @@ const ASSETS_TO_CACHE = [
   './js/world/tilemap.js',
   './js/world/levelData.js',
   './js/world/objects.js',
+  './js/minigames/pawStompGame.js',
+  './js/minigames/catchCoinsGame.js',
   './js/ui/hud.js',
   './assets/hero_transparent.png',
-  './assets/hero_original.png',
+  './assets/hero_level2.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -30,7 +33,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching all game assets v3');
+      console.log('[Service Worker] Caching all game assets v6');
       return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
         console.warn('[Service Worker] Partial cache error:', err);
       });
@@ -58,27 +61,14 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        if (
-          networkResponse &&
-          networkResponse.status === 200 &&
-          networkResponse.type === 'basic'
-        ) {
-          const responseToCache = networkResponse.clone();
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, responseClone);
           });
         }
         return networkResponse;
       })
-      .catch(() => {
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
-      })
+      .catch(() => caches.match(event.request))
   );
 });
