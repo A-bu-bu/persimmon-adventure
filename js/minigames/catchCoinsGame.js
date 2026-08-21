@@ -1,4 +1,4 @@
-// Mini-Game 2: 憭拚?鞎∠??仿???(Catch the Falling Riches)
+// Mini-Game 2: 天降財神接金鈔 (Catch the Falling Riches)
 import { audio } from '../engine/audio.js';
 import { particles } from '../engine/particles.js';
 import { saveManager } from '../engine/saveManager.js';
@@ -60,12 +60,12 @@ export class CatchCoinsGame {
 
   spawnMoney() {
     const types = [
-      { type: 'copper', val: 10, label: '?? 10??, color: '#cd7f32', speed: 200, prob: 0.35 },
-      { type: 'coin', val: 50, label: '? 50??, color: '#ffd700', speed: 240, prob: 0.3 },
-      { type: 'bill100', val: 100, label: '? 100??, color: '#4caf50', speed: 260, prob: 0.18 },
-      { type: 'bill1000', val: 1000, label: '? ??憭折?', color: '#2196f3', speed: 300, prob: 0.09 },
-      { type: 'ingot', val: 5000, label: '潃??砍?窄', color: '#ffea00', speed: 340, prob: 0.04 },
-      { type: 'bomb', val: -300, label: '? ?詨?', color: '#ff1744', speed: 280, prob: 0.08 }
+      { type: 'copper', val: 10, label: '🪙 10元', color: '#cd7f32', speed: 200, prob: 0.35 },
+      { type: 'coin', val: 50, label: '💰 50元', color: '#ffd700', speed: 240, prob: 0.3 },
+      { type: 'bill100', val: 100, label: '💵 100元', color: '#4caf50', speed: 260, prob: 0.18 },
+      { type: 'bill1000', val: 1000, label: '💴 千元大鈔', color: '#2196f3', speed: 300, prob: 0.09 },
+      { type: 'ingot', val: 5000, label: '⭐ 萬兩元寶', color: '#ffea00', speed: 340, prob: 0.04 },
+      { type: 'bomb', val: -300, label: '💣 炸彈', color: '#ff1744', speed: 280, prob: 0.08 }
     ];
 
     const rand = Math.random();
@@ -134,7 +134,7 @@ export class CatchCoinsGame {
           audio.playHurt();
           particles.createExplosion(m.x, m.y, 25, '#ff1744');
           this.floatingTexts.push({
-            text: `-300 ?詨?! ?`,
+            text: `-300 炸彈! 💥`,
             x: m.x,
             y: m.y - 20,
             color: '#ff1744',
@@ -146,7 +146,7 @@ export class CatchCoinsGame {
           audio.playCoin();
           particles.createHitSparks(m.x, m.y, 10, m.color);
           this.floatingTexts.push({
-            text: `+${m.val} ?`,
+            text: `+${m.val} 💵`,
             x: m.x,
             y: m.y - 20,
             color: m.color,
@@ -192,13 +192,13 @@ export class CatchCoinsGame {
     ctx.fillStyle = '#ffea00';
     ctx.font = 'bold 22px "Microsoft JhengHei", sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('? 憭拚?鞎∠??仿???(Catch the Falling Riches)', 30, 40);
+    ctx.fillText('💰 天降財神接金鈔 (Catch the Falling Riches)', 30, 40);
 
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 16px "Microsoft JhengHei", sans-serif';
-    ctx.fillText(`?梧? ??: ${Math.ceil(this.timeLeft)}s`, 30, 70);
-    ctx.fillText(`? 蝝舐???: $${this.moneyTotal}`, 200, 70);
-    ctx.fillText(`潃?蝮賢??? ${this.score}`, 440, 70);
+    ctx.fillText(`⏱️ 時間: ${Math.ceil(this.timeLeft)}s`, 30, 70);
+    ctx.fillText(`💵 累積金額: $${this.moneyTotal}`, 200, 70);
+    ctx.fillText(`⭐ 總得分: ${this.score}`, 440, 70);
 
     ctx.fillStyle = 'rgba(255,255,255,0.2)';
     ctx.strokeStyle = '#fff';
@@ -210,7 +210,7 @@ export class CatchCoinsGame {
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.font = 'bold 14px "Microsoft JhengHei", sans-serif';
-    ctx.fillText('餈? ??, 885, 40);
+    ctx.fillText('返回 ✖', 885, 40);
 
     for (let m of this.moneyItems) {
       ctx.save();
@@ -318,11 +318,11 @@ export class CatchCoinsGame {
       ctx.fillStyle = '#ffd700';
       ctx.font = 'bold 34px "Microsoft JhengHei", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('?? ?仿????啁?蝞?', w / 2, h / 2 - 50);
+      ctx.fillText('🎉 接金鈔挑戰結算！', w / 2, h / 2 - 50);
 
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 22px "Microsoft JhengHei", sans-serif';
-      ctx.fillText(`蝮賣蝛恍?憿? $${this.moneyTotal} ?? |  敺?: ${this.score}`, w / 2, h / 2);
+      ctx.fillText(`總收穫金額: $${this.moneyTotal} 元  |  得分: ${this.score}`, w / 2, h / 2);
 
       ctx.fillStyle = '#ff7700';
       if (ctx.roundRect) ctx.roundRect(w / 2 - 90, h / 2 + 40, 180, 44, 10);
@@ -331,7 +331,7 @@ export class CatchCoinsGame {
 
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 16px "Microsoft JhengHei", sans-serif';
-      ctx.fillText('?? ?蜓?詨 (暺?)', w / 2, h / 2 + 68);
+      ctx.fillText('🍊 回主選單 (點擊)', w / 2, h / 2 + 68);
     }
   }
 
