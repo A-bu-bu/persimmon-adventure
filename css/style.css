@@ -522,3 +522,122 @@ p.game-subtitle {
     transform-origin: bottom right;
   }
 }
+
+/* --- LEVEL SELECT MODAL STYLES --- */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.level-card-btn {
+  background: rgba(45, 30, 70, 0.8);
+  border: 2px solid rgba(255, 170, 0, 0.4);
+  border-radius: 12px;
+  padding: 14px 10px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.level-card-btn:hover:not(.locked) {
+  background: rgba(80, 45, 120, 0.95);
+  border-color: #ffd700;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 180, 0, 0.4);
+}
+
+.level-card-btn.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(25, 20, 35, 0.6);
+}
+
+.level-card-num {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.level-card-name {
+  font-size: 12px;
+  color: #ddd;
+  text-align: center;
+}
+
+/* --- MINI-GAMES MODAL STYLES --- */
+.minigames-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.minigame-card {
+  background: rgba(35, 25, 55, 0.85);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.minigame-card:hover {
+  border-color: #ffd700;
+  background: rgba(55, 35, 85, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+}
+
+.minigame-icon {
+  font-size: 38px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.3);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.minigame-info {
+  flex: 1;
+}
+
+.minigame-info h3 {
+  color: #ffd700;
+  font-size: 17px;
+  margin-bottom: 4px;
+}
+
+.minigame-info p {
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.minigame-meta {
+  font-size: 11px;
+  color: #81c784;
+  font-weight: bold;
+}
+
+.btn-play-minigame {
+  padding: 10px 18px;
+  font-size: 14px;
+  flex-shrink: 0;
+}

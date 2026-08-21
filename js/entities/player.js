@@ -66,9 +66,21 @@ export class Player {
     this.dropThrough = false;
 
     // Hero Sprite Image
+    this.spriteSrc = './assets/hero_transparent.png';
     this.sprite = new Image();
-    this.sprite.src = './assets/hero_transparent.png';
+    this.sprite.src = this.spriteSrc;
     this.spriteLoaded = false;
+    this.sprite.onload = () => {
+      this.spriteLoaded = true;
+    };
+  }
+
+  setHeroSprite(src) {
+    if (this.spriteSrc === src) return;
+    this.spriteSrc = src;
+    this.spriteLoaded = false;
+    this.sprite = new Image();
+    this.sprite.src = src;
     this.sprite.onload = () => {
       this.spriteLoaded = true;
     };

@@ -103,27 +103,83 @@ export class SpringMushroom {
 
   draw(ctx) {
     ctx.save();
-    const squash = this.bounceTimer > 0 ? 0.6 : 1.0;
-    ctx.translate(this.x + this.width / 2, this.y + this.height);
-    ctx.scale(1, squash);
+    ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+
+    const squish = this.bounceTimer > 0 ? 0.5 : (1 + 0.05 * Math.sin(Date.now() * 0.006));
+    ctx.scale(1, squish);
 
     // Mushroom Cap
-    ctx.fillStyle = '#ff4444';
+    ctx.fillStyle = '#ff3344';
+    ctx.shadowColor = '#ff2233';
+    ctx.shadowBlur = 8;
     ctx.beginPath();
-    ctx.arc(0, -16, 18, Math.PI, 0);
+    ctx.arc(0, -2, 16, Math.PI, 0);
     ctx.fill();
 
-    // White polka dots
+    // Dots
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(-8, -20, 3, 0, Math.PI * 2);
-    ctx.arc(0, -26, 3, 0, Math.PI * 2);
-    ctx.arc(8, -20, 3, 0, Math.PI * 2);
+    ctx.arc(-8, -8, 3, 0, Math.PI * 2);
+    ctx.arc(6, -9, 3, 0, Math.PI * 2);
+    ctx.arc(0, -14, 2.5, 0, Math.PI * 2);
     ctx.fill();
 
     // Stem
-    ctx.fillStyle = '#f5e4c3';
-    ctx.fillRect(-6, -14, 12, 14);
+    ctx.fillStyle = '#f0e6d2';
+    ctx.fillRect(-6, -2, 12, 12);
+
+    ctx.restore();
+  }
+}
+
+export class LuckyPawPad {
+  constructor(x, y, power = -690) {
+    this.x = x;
+    this.y = y;
+    this.width = 44;
+    this.height = 28;
+    this.power = power;
+    this.bounceTimer = 0;
+  }
+
+  update(dt, player) {
+    if (this.bounceTimer > 0) this.bounceTimer -= dt;
+
+    if (Physics.checkAABB(this, player) && player.vy > 0 && player.y + player.height <= this.y + 18) {
+      player.y = this.y - player.height;
+      player.vy = this.power;
+      player.grounded = false;
+      this.bounceTimer = 0.28;
+      player.addCoins(2, 200);
+      audio.playSpring();
+      audio.playCoin();
+      particles.createExplosion(this.x + this.width / 2, this.y, 16, '#ffd700');
+    }
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
+
+    const squish = this.bounceTimer > 0 ? 0.6 : (1 + 0.08 * Math.sin(Date.now() * 0.008));
+    ctx.scale(1, squish);
+
+    // Glowing Golden Footprint Pad
+    ctx.fillStyle = '#ffd700';
+    ctx.shadowColor = '#ffea00';
+    ctx.shadowBlur = 14;
+
+    // Main Paw Pad
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 18, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4 Toes
+    for (let i = -12; i <= 12; i += 8) {
+      ctx.beginPath();
+      ctx.arc(i, -8, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.restore();
   }

@@ -118,8 +118,9 @@ setBlock(l2Tiles, l2W, 0, 0, 1, 20, 5);
 setBlock(l2Tiles, l2W, 89, 0, 1, 20, 5);
 
 export const Level2 = {
-  name: '第二關：荊棘迷宮',
+  name: '第二關：好運旺旺來・神采踩腳丫',
   theme: 'bramble',
+  heroSprite: './assets/hero_level2.png',
   width: l2W,
   height: l2H,
   tiles: l2Tiles,
@@ -135,9 +136,11 @@ export const Level2 = {
     { x: 62 * 32, y: 4 * 32, type: 'persimmon' },
     { x: 74 * 32, y: 11 * 32, type: 'persimmon' }
   ],
-  springs: [
-    { x: 10 * 32, y: 16 * 32 + 8, power: -690 },
-    { x: 34 * 32, y: 16 * 32 + 8, power: -720 }
+  springs: [],
+  pawPads: [
+    { x: 10 * 32, y: 16 * 32 + 4, power: -720 },
+    { x: 34 * 32, y: 16 * 32 + 4, power: -740 },
+    { x: 64 * 32, y: 16 * 32 + 4, power: -750 }
   ],
   movingPlatforms: [
     { x: 21 * 32, y: 14 * 32, width: 64, height: 14, moveX: 0, moveY: -140, speed: 60 },
