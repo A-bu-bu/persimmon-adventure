@@ -16,7 +16,7 @@
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./css/style.css?v=6">
+  <link rel="stylesheet" href="./css/style.css?v=7">
 </head>
 <body>
   <div id="app">
@@ -100,19 +100,27 @@
           <button id="btn-continue-game" class="primary-btn" style="display: none; background: linear-gradient(135deg, #43a047, #1b5e20);">▶️ 繼續冒險 (進入第 <span id="continue-lvl-num">1</span> 關)</button>
           <button id="btn-start-game" class="primary-btn">🍊 新的冒險 (從第 1 關開始)</button>
           <div style="display: flex; gap: 10px; width: 100%;">
-            <button id="btn-open-level-select" class="secondary-btn" style="flex: 1;">🚩 關卡選擇</button>
+            <button id="btn-open-level-select" class="secondary-btn" style="flex: 1;">🚩 關卡選擇與隱藏遊戲</button>
             <button id="btn-open-minigames" class="secondary-btn" style="flex: 1; border-color: #ffd700; color: #ffeb3b;">🎮 迷你遊戲專區</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- LEVEL SELECT MODAL -->
+    <!-- LEVEL SELECT MODAL (含主線關卡與過關解鎖隱藏迷你遊戲) -->
     <div id="modal-level-select" class="overlay-modal" style="display: none;">
-      <div class="modal-content" style="max-width: 600px;">
-        <h1 class="game-title" style="font-size: 26px;">🚩 關卡選擇</h1>
-        <p class="game-subtitle">點選已解鎖的關卡直接挑戰！</p>
+      <div class="modal-content" style="max-width: 660px; max-height: 90vh; overflow-y: auto;">
+        <h1 class="game-title" style="font-size: 26px;">🚩 關卡選擇與過關解鎖</h1>
+        <p class="game-subtitle">選擇冒險關卡挑戰，通關後可解鎖隱藏特色 Mini-Games！</p>
+        
+        <!-- 主線 1~6 關 -->
+        <h3 style="color: #ffaa00; font-size: 15px; margin: 12px 0 8px; text-align: left;">🗺️ 主線冒險關卡</h3>
         <div id="level-select-grid" class="level-grid"></div>
+
+        <!-- 過關解鎖的隱藏迷你遊戲 -->
+        <h3 style="color: #ffd700; font-size: 15px; margin: 18px 0 8px; text-align: left;">🏆 過關解鎖・隱藏特色迷你遊戲 (Mini-Games)</h3>
+        <div id="level-select-minigames" class="minigames-grid"></div>
+
         <div class="btn-group" style="margin-top: 18px;">
           <button id="btn-close-level-select" class="secondary-btn">返回主選單</button>
         </div>
@@ -272,6 +280,6 @@
   </div>
 
   <!-- Game Scripts -->
-  <script type="module" src="./js/main.js?v=6"></script>
+  <script type="module" src="./js/main.js?v=7"></script>
 </body>
 </html>

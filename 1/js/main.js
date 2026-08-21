@@ -157,40 +157,39 @@ class Game {
   }
 
   bindUIEvents() {
-    // Start Game Button
-    const startBtn = document.getElementById('btn-start-game');
-    if (startBtn) {
-      startBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        console.log('[UI] Start Game Clicked');
-        audio.resume();
-        this.startNewGame();
-      });
-    }
+    const attachButton = (id, handler) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.onclick = (e) => {
+        if (e) e.preventDefault();
+        handler(e);
+      };
+    };
+
+    // Start Game Button (從第 1 關開始冒險)
+    attachButton('btn-start-game', () => {
+      console.log('[UI] Start New Game from Level 1 Clicked');
+      audio.resume();
+      this.startNewGame();
+    });
 
     // Continue Saved Game
-    const continueBtn = document.getElementById('btn-continue-game');
-    if (continueBtn) {
-      continueBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        console.log('[UI] Continue Game Clicked');
-        audio.resume();
-        const targetLvl = (saveManager.data.currentLevel || 1) - 1;
-        this.loadLevel(Math.min(LEVELS.length - 1, Math.max(0, targetLvl)));
-        this.setState('PLAYING');
-      });
-    }
+    attachButton('btn-continue-game', () => {
+      console.log('[UI] Continue Game Clicked');
+      audio.resume();
+      const targetLvl = (saveManager.data.currentLevel || 1) - 1;
+      this.loadLevel(Math.min(LEVELS.length - 1, Math.max(0, targetLvl)));
+      this.setState('PLAYING');
+    });
 
     // Level Select Modal
     const levelSelectModal = document.getElementById('modal-level-select');
-    document.getElementById('btn-open-level-select')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-open-level-select', () => {
       console.log('[UI] Open Level Select Clicked');
       this.renderLevelSelectGrid();
       levelSelectModal.style.display = 'flex';
     });
-    document.getElementById('btn-close-level-select')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-close-level-select', () => {
       levelSelectModal.style.display = 'none';
     });
 
@@ -202,88 +201,79 @@ class Game {
       this.updateStartMenuState();
       minigamesModal.style.display = 'flex';
     };
-    document.getElementById('btn-open-minigames')?.addEventListener('click', openMiniGames);
-    document.getElementById('btn-open-minigames-top')?.addEventListener('click', openMiniGames);
-    document.getElementById('btn-close-minigames')?.addEventListener('click', (e) => {
-      if (e) e.preventDefault();
+    attachButton('btn-open-minigames', openMiniGames);
+    attachButton('btn-open-minigames-top', openMiniGames);
+    attachButton('btn-close-minigames', () => {
       minigamesModal.style.display = 'none';
     });
 
-    // Play Mini-Game Buttons
+    // Play Mini-Game Buttons in Mini-Game Modal
     document.querySelectorAll('.btn-play-minigame').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
+      btn.onclick = (e) => {
+        if (e) e.preventDefault();
         const gameId = e.currentTarget.getAttribute('data-game');
         console.log('[UI] Play Mini-Game Clicked:', gameId);
         minigamesModal.style.display = 'none';
         this.startMiniGame(gameId);
-      });
+      };
     });
 
     // Instructions Modal
     const helpModal = document.getElementById('modal-help');
-    document.getElementById('btn-how-to-play')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-how-to-play', () => {
       helpModal.style.display = 'flex';
     });
-    document.getElementById('btn-close-help')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-close-help', () => {
       helpModal.style.display = 'none';
     });
 
     // Next Level Button
-    document.getElementById('btn-next-level')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-next-level', () => {
       this.loadNextLevel();
     });
 
     // Retry Level Button
-    document.getElementById('btn-retry-level')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-retry-level', () => {
       this.loadLevel(this.currentLevelIndex);
       this.setState('PLAYING');
     });
 
     // Play Again (After Game Complete)
-    document.getElementById('btn-play-again')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-play-again', () => {
       this.startNewGame();
     });
 
     // Audio Mute Toggle
     const soundBtn = document.getElementById('btn-toggle-sound');
-    soundBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-toggle-sound', () => {
       const isMuted = audio.toggleMute();
-      soundBtn.textContent = isMuted ? '🔇 音效: 關' : '🔊 音效: 開';
+      if (soundBtn) soundBtn.textContent = isMuted ? '🔇 音效: 關' : '🔊 音效: 開';
     });
 
     // Resume from Pause
-    document.getElementById('btn-resume')?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-resume', () => {
       this.togglePause();
     });
 
     // Return to Menu
     document.querySelectorAll('.btn-return-menu').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
+      btn.onclick = (e) => {
+        if (e) e.preventDefault();
         audio.stopBGM();
         this.setState('MENU');
-      });
+      };
     });
 
     // Toggle Touch Controls Button
     const touchToggleBtn = document.getElementById('btn-toggle-touch');
     const touchOverlay = document.getElementById('touch-controls');
-    touchToggleBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
+    attachButton('btn-toggle-touch', () => {
       if (touchOverlay.style.display === 'none') {
         touchOverlay.style.display = 'block';
-        touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
+        if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
       } else {
         touchOverlay.style.display = 'none';
-        touchToggleBtn.textContent = '🎮 觸控搖桿: 關';
+        if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 關';
       }
     });
 
@@ -297,33 +287,92 @@ class Game {
 
   renderLevelSelectGrid() {
     const grid = document.getElementById('level-select-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
+    if (grid) {
+      grid.innerHTML = '';
+      const highestUnlocked = saveManager.data.highestLevel || 1;
 
-    const highestUnlocked = saveManager.data.highestLevel || 1;
+      LEVELS.forEach((lvl, idx) => {
+        const lvlNum = idx + 1;
+        const isUnlocked = lvlNum <= highestUnlocked;
 
-    LEVELS.forEach((lvl, idx) => {
-      const lvlNum = idx + 1;
-      const isUnlocked = lvlNum <= highestUnlocked;
+        const card = document.createElement('div');
+        card.className = `level-card-btn ${isUnlocked ? '' : 'locked'}`;
+        card.innerHTML = `
+          <div class="level-card-num">${isUnlocked ? '第 ' + lvlNum + ' 關' : '🔒 鎖定'}</div>
+          <div class="level-card-name">${lvl.name}</div>
+        `;
 
-      const card = document.createElement('div');
-      card.className = `level-card-btn ${isUnlocked ? '' : 'locked'}`;
-      card.innerHTML = `
-        <div class="level-card-num">${isUnlocked ? '第 ' + lvlNum + ' 關' : '🔒 鎖定'}</div>
-        <div class="level-card-name">${lvl.name}</div>
-      `;
+        if (isUnlocked) {
+          card.onclick = (e) => {
+            if (e) e.preventDefault();
+            document.getElementById('modal-level-select').style.display = 'none';
+            audio.resume();
+            this.loadLevel(idx);
+            this.setState('PLAYING');
+          };
+        }
 
-      if (isUnlocked) {
-        card.addEventListener('click', () => {
-          document.getElementById('modal-level-select').style.display = 'none';
-          audio.resume();
-          this.loadLevel(idx);
-          this.setState('PLAYING');
-        });
-      }
+        grid.appendChild(card);
+      });
+    }
 
-      grid.appendChild(card);
-    });
+    // Render Overpass / Unlocked Mini-Games Section
+    const miniGamesContainer = document.getElementById('level-select-minigames');
+    if (miniGamesContainer) {
+      miniGamesContainer.innerHTML = '';
+      const highestUnlocked = saveManager.data.highestLevel || 1;
+
+      const minigames = [
+        {
+          id: 'pawStomp',
+          name: '🐾 神速踩腳丫大對決',
+          desc: '隨機踩踏招財金腳印與調皮獸足，挑戰極速連擊！',
+          unlockLvl: 2, // Unlocked by clearing Level 1
+          scoreKey: 'pawStomp'
+        },
+        {
+          id: 'catchCoins',
+          name: '💰 天降財神接金鈔',
+          desc: '天降硬幣、百元鈔、千元大鈔與元寶！左右奔跑撿錢！',
+          unlockLvl: 3, // Unlocked by clearing Level 2
+          scoreKey: 'catchCoins'
+        }
+      ];
+
+      minigames.forEach((mg) => {
+        const isUnlocked = highestUnlocked >= mg.unlockLvl;
+        const highScore = (saveManager.data.miniGameScores && saveManager.data.miniGameScores[mg.scoreKey]) || 0;
+
+        const card = document.createElement('div');
+        card.className = `minigame-card ${isUnlocked ? '' : 'locked'}`;
+        card.style.opacity = isUnlocked ? '1' : '0.65';
+        card.innerHTML = `
+          <div class="minigame-icon">${mg.name.slice(0, 2)}</div>
+          <div class="minigame-info">
+            <h3 style="margin: 0 0 4px; color: ${isUnlocked ? '#ffd700' : '#bbb'}; font-size: 16px;">
+              ${mg.name} ${isUnlocked ? '🌟' : '🔒'}
+            </h3>
+            <p style="margin: 0 0 6px; font-size: 12px; color: #ccc;">${mg.desc}</p>
+            <div style="font-size: 11px; color: ${isUnlocked ? '#81c784' : '#ffa726'}; font-weight: bold;">
+              ${isUnlocked ? `最高紀錄: ${highScore} 分` : `通關第 ${mg.unlockLvl - 1} 關即可解鎖！`}
+            </div>
+          </div>
+          <button class="primary-btn" style="padding: 8px 16px; font-size: 13px; flex-shrink: 0; ${isUnlocked ? '' : 'opacity: 0.5; cursor: not-allowed;'}" ${isUnlocked ? '' : 'disabled'}>
+            ${isUnlocked ? '挑戰 ➔' : '🔒 尚未解鎖'}
+          </button>
+        `;
+
+        if (isUnlocked) {
+          card.querySelector('button').onclick = (e) => {
+            if (e) e.preventDefault();
+            document.getElementById('modal-level-select').style.display = 'none';
+            this.startMiniGame(mg.id);
+          };
+        }
+
+        miniGamesContainer.appendChild(card);
+      });
+    }
   }
 
   startMiniGame(gameId) {
@@ -376,6 +425,7 @@ class Game {
   }
 
   startNewGame() {
+    console.log('[Game] Starting Level 1 (第一關：豐收果園)...');
     this.currentLevelIndex = 0;
     this.player.score = 0;
     this.player.coins = 0;
@@ -717,7 +767,7 @@ class Game {
   }
 }
 
-// Robust Game Bootstrapper: Works whether DOM is loading or already loaded!
+// Robust Game Bootstrapper
 function initPersimmonAdventure() {
   if (!window.gameInstance) {
     window.gameInstance = new Game();
