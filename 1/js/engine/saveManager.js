@@ -1,4 +1,4 @@
-﻿// Save Manager: LocalStorage Game Progress & Unlocked Mini-Games
+// Save Manager: LocalStorage Game Progress & Unlocked Mini-Games
 export class SaveManager {
   constructor() {
     this.storageKey = 'persimmon_adventure_save_v1';
@@ -11,11 +11,10 @@ export class SaveManager {
       currentLevel: 1,
       totalCoins: 0,
       highScore: 0,
-      unlockedMiniGames: ['pawStomp'], // 預設解鎖踩腳丫迷你遊戲
+      unlockedMiniGames: ['pawStomp'],
       miniGameScores: {
         pawStomp: 0,
-        catchCoins: 0,
-        whackBug: 0
+        catchCoins: 0
       },
       lastSavedTime: Date.now()
     };
@@ -29,7 +28,7 @@ export class SaveManager {
         return Object.assign(this.getDefaultData(), parsed);
       }
     } catch (e) {
-      console.warn('Could not load save data from localStorage:', e);
+      console.warn('Could not load save data:', e);
     }
     return this.getDefaultData();
   }
@@ -39,26 +38,22 @@ export class SaveManager {
       this.data.lastSavedTime = Date.now();
       localStorage.setItem(this.storageKey, JSON.stringify(this.data));
     } catch (e) {
-      console.warn('Could not write save data to localStorage:', e);
+      console.warn('Could not write save data:', e);
     }
   }
 
   reachLevel(levelIndex) {
-    const lvl = levelIndex + 1; // 1-indexed
+    const lvl = levelIndex + 1;
     if (lvl > this.data.highestLevel) {
       this.data.highestLevel = lvl;
     }
     this.data.currentLevel = lvl;
 
-    // 解鎖特定迷你遊戲
     if (lvl >= 2 && !this.data.unlockedMiniGames.includes('pawStomp')) {
       this.data.unlockedMiniGames.push('pawStomp');
     }
     if (lvl >= 3 && !this.data.unlockedMiniGames.includes('catchCoins')) {
       this.data.unlockedMiniGames.push('catchCoins');
-    }
-    if (lvl >= 4 && !this.data.unlockedMiniGames.includes('whackBug')) {
-      this.data.unlockedMiniGames.push('whackBug');
     }
     this.save();
   }

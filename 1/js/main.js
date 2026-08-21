@@ -1,4 +1,4 @@
-﻿// Main Game Lifecycle, Loop & State Machine
+// Main Game Lifecycle, Loop & State Machine
 import { input } from './engine/input.js';
 import { audio } from './engine/audio.js';
 import { Camera } from './engine/camera.js';
@@ -147,7 +147,6 @@ class Game {
       }
     }
 
-    // Update Mini Game high scores
     const pawScoreEl = document.getElementById('score-pawStomp');
     if (pawScoreEl) pawScoreEl.textContent = (saveData.miniGameScores && saveData.miniGameScores.pawStomp) || 0;
 
@@ -156,13 +155,11 @@ class Game {
   }
 
   bindUIEvents() {
-    // Start New Game (From Level 1)
     document.getElementById('btn-start-game')?.addEventListener('click', () => {
       audio.resume();
       this.startNewGame();
     });
 
-    // Continue Saved Game
     document.getElementById('btn-continue-game')?.addEventListener('click', () => {
       audio.resume();
       const targetLvl = (saveManager.data.currentLevel || 1) - 1;
@@ -170,7 +167,6 @@ class Game {
       this.setState('PLAYING');
     });
 
-    // Open Level Select
     const levelSelectModal = document.getElementById('modal-level-select');
     document.getElementById('btn-open-level-select')?.addEventListener('click', () => {
       this.renderLevelSelectGrid();
@@ -180,7 +176,6 @@ class Game {
       levelSelectModal.style.display = 'none';
     });
 
-    // Open Mini-Games
     const minigamesModal = document.getElementById('modal-minigames');
     const openMiniGames = () => {
       this.updateStartMenuState();
@@ -192,7 +187,6 @@ class Game {
       minigamesModal.style.display = 'none';
     });
 
-    // Play Mini-Game Buttons
     document.querySelectorAll('.btn-play-minigame').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const gameId = e.currentTarget.getAttribute('data-game');
@@ -201,7 +195,6 @@ class Game {
       });
     });
 
-    // Instructions modal
     const helpModal = document.getElementById('modal-help');
     document.getElementById('btn-how-to-play')?.addEventListener('click', () => {
       helpModal.style.display = 'flex';
@@ -210,35 +203,29 @@ class Game {
       helpModal.style.display = 'none';
     });
 
-    // Next Level Button
     document.getElementById('btn-next-level')?.addEventListener('click', () => {
       this.loadNextLevel();
     });
 
-    // Retry Level Button
     document.getElementById('btn-retry-level')?.addEventListener('click', () => {
       this.loadLevel(this.currentLevelIndex);
       this.setState('PLAYING');
     });
 
-    // Play Again (After Game Complete)
     document.getElementById('btn-play-again')?.addEventListener('click', () => {
       this.startNewGame();
     });
 
-    // Audio Mute Toggle
     const soundBtn = document.getElementById('btn-toggle-sound');
     soundBtn?.addEventListener('click', () => {
       const isMuted = audio.toggleMute();
       soundBtn.textContent = isMuted ? '?? ?單?: ?? : '?? ?單?: ??;
     });
 
-    // Resume from Pause
     document.getElementById('btn-resume')?.addEventListener('click', () => {
       this.togglePause();
     });
 
-    // Return to Menu from Pause/GameOver/LevelClear
     document.querySelectorAll('.btn-return-menu').forEach((btn) => {
       btn.addEventListener('click', () => {
         audio.stopBGM();
@@ -246,7 +233,6 @@ class Game {
       });
     });
 
-    // Toggle Touch Controls Button
     const touchToggleBtn = document.getElementById('btn-toggle-touch');
     const touchOverlay = document.getElementById('touch-controls');
     touchToggleBtn?.addEventListener('click', () => {
@@ -259,7 +245,6 @@ class Game {
       }
     });
 
-    // Auto-detect mobile devices
     const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || ('ontouchstart' in window);
     if (isMobile && touchOverlay) {
       touchOverlay.style.display = 'block';
@@ -281,7 +266,7 @@ class Game {
       const card = document.createElement('div');
       card.className = `level-card-btn ${isUnlocked ? '' : 'locked'}`;
       card.innerHTML = `
-        <div class="level-card-num">${isUnlocked ? `蝚?${lvlNum} ? : `?? ??`}</div>
+        <div class="level-card-num">${isUnlocked ? '蝚?' + lvlNum + ' ?? : '?? ??'}</div>
         <div class="level-card-name">${lvl.name}</div>
       `;
 
@@ -321,12 +306,10 @@ class Game {
   setState(newState) {
     this.state = newState;
 
-    // Hide all overlay modals
     document.querySelectorAll('.overlay-modal').forEach((modal) => {
       modal.style.display = 'none';
     });
 
-    // Show active modal
     if (newState === 'MENU') {
       this.updateStartMenuState();
       document.getElementById('modal-start').style.display = 'flex';
@@ -358,61 +341,49 @@ class Game {
     this.currentLevelIndex = index;
     this.currentLevel = LEVELS[index];
 
-    // Save progress!
     saveManager.reachLevel(index);
 
     this.tilemap.loadLevel(this.currentLevel);
     this.camera.setBounds(0, 0, this.currentLevel.width * 32, this.currentLevel.height * 32);
 
-    // Switch custom hero sprite for level (e.g. Level 2 dedicated sprite)
     this.player.setHeroSprite(this.currentLevel.heroSprite || './assets/hero_transparent.png');
 
-    // Reset Player
     this.player.reset(this.currentLevel.playerStart.x, this.currentLevel.playerStart.y);
     this.camera.follow(this.player);
 
-    // Clear and build entities
     this.bullets = [];
     particles.clear();
 
-    // Build Collectibles
     this.collectibles = (this.currentLevel.collectibles || []).map(
       (c) => new Collectible(c.x, c.y, c.type)
     );
 
-    // Springs
     this.springs = (this.currentLevel.springs || []).map(
       (s) => new SpringMushroom(s.x, s.y, s.power)
     );
 
-    // Lucky Paw Stomp Pads (蝚??萱?喃葦撠)
     this.pawPads = (this.currentLevel.pawPads || []).map(
       (p) => new LuckyPawPad(p.x, p.y, p.power)
     );
 
-    // Moving Platforms
     this.movingPlatforms = (this.currentLevel.movingPlatforms || []).map(
       (p) => new MovingPlatform(p.x, p.y, p.width, p.height, p.moveX, p.moveY, p.speed)
     );
 
-    // Crumbling Platforms
     this.crumblingPlatforms = (this.currentLevel.crumblingPlatforms || []).map(
       (c) => new CrumblingPlatform(c.x, c.y, c.width, c.height)
     );
 
-    // Portal
     if (this.currentLevel.portal) {
       this.portal = new WarpPortal(this.currentLevel.portal.x, this.currentLevel.portal.y);
     } else {
       this.portal = null;
     }
 
-    // Enemies
     this.enemies = (this.currentLevel.enemies || []).map(
       (e) => new Enemy(e.x, e.y, e.type)
     );
 
-    // Boss (Level 3 & Level 6)
     if (this.currentLevel.hasBoss) {
       this.boss = new Boss(
         this.currentLevel.bossStart.x,
@@ -443,7 +414,6 @@ class Game {
     }
   }
 
-  // --- GAME UPDATE & TICK ---
   update(dt) {
     if (this.state === 'MINIGAME' && this.currentMiniGame) {
       this.currentMiniGame.update(dt);
