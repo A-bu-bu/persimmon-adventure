@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Diagnostic Test</title>
+  <style>
+    body { padding:20px; background:#1a0a2e; color:white; font-family:sans-serif; }
+    #log { background:#111; color:#0f0; padding:15px; border-radius:8px; margin-top:20px; font-family:monospace; font-size:13px; min-height:200px; white-space:pre-wrap; }
+    .test-btn { margin:5px; padding:10px 20px; cursor:pointer; font-size:14px; background:#ff7700; border:none; color:white; border-radius:8px; }
+    .game-btn { margin:5px; padding:8px 16px; border-radius:14px; background:rgba(60,40,90,0.8); border:1px solid rgba(255,255,255,0.3); color:white; cursor:pointer; font-size:13px; }
+  </style>
+</head>
+<body>
+  <h2>Button Diagnostic</h2>
+  <p>Click to test:</p>
+  <div>
+    <button class="test-btn" onclick="log('INLINE onclick WORKS!')">Test Inline onclick</button>
+    <button class="test-btn" id="test-js-btn">Test JS addEventListener</button>
+    <button class="test-btn" id="test-module-btn">Test Module addEventListener</button>
+  </div>
+  <h3 style="margin-top:20px">Game buttons (same IDs):</h3>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+    <button id="btn-profile-stats" class="game-btn" style="border-color:#ffd700;color:#ffd700">📊 戰績榜</button>
+    <button id="btn-account-switch" class="game-btn">🔄 切換帳號</button>
+    <button id="btn-start-game" class="game-btn" style="background:#ff7700">🍊 新的冒險</button>
+    <button id="btn-level-select" class="game-btn">🚩 10大關卡選擇</button>
+    <button id="btn-minigames-menu" class="game-btn" style="border-color:#ffd700;color:#ffeb3b">🎮 10大迷你遊戲專區</button>
+  </div>
+  <div id="log">Waiting...\n</div>
+  <script>
+    function log(msg) {
+      document.getElementById('log').textContent += new Date().toLocaleTimeString() + ' | ' + msg + '\n';
+    }
+    document.getElementById('test-js-btn').addEventListener('click', function() { log('JS addEventListener WORKS!'); });
+    document.getElementById('btn-profile-stats').addEventListener('click', function() { log('btn-profile-stats CLICKED!'); });
+    document.getElementById('btn-account-switch').addEventListener('click', function() { log('btn-account-switch CLICKED!'); });
+    document.getElementById('btn-start-game').addEventListener('click', function() { log('btn-start-game CLICKED!'); });
+    document.getElementById('btn-level-select').addEventListener('click', function() { log('btn-level-select CLICKED!'); });
+    document.getElementById('btn-minigames-menu').addEventListener('click', function() { log('btn-minigames-menu CLICKED!'); });
+    log('Inline script loaded OK');
+  </script>
+  <script type="module">
+    document.getElementById('test-module-btn').addEventListener('click', function() { document.getElementById('log').textContent += new Date().toLocaleTimeString() + ' | Module addEventListener WORKS!\n'; });
+    document.getElementById('log').textContent += new Date().toLocaleTimeString() + ' | ES Module loaded OK\n';
+  </script>
+</body>
+</html>
