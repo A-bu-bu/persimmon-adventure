@@ -1,4 +1,4 @@
-// Handcrafted Level Data for Levels 1 to 6 with unique Hero Sprites per level
+// Handcrafted Level Data for Levels 1 to 10 with unique Hero Sprites per level
 
 function createGrid(w, h, fill = 0) {
   return new Array(w * h).fill(fill);
@@ -104,20 +104,17 @@ setBlock(l2Tiles, l2W, 66, 17, 24, 3, 1);
 setBlock(l2Tiles, l2W, 66, 18, 24, 2, 2);
 
 // Gentle Stepping Platforms & Passable Wall Sections
-// Step 1: Platforms leading over first wall
-setBlock(l2Tiles, l2W, 6, 14, 4, 1, 3);   // Step 1
-setBlock(l2Tiles, l2W, 10, 12, 4, 1, 3);  // Step 2
-setBlock(l2Tiles, l2W, 14, 11, 2, 6, 5);  // Wall (lowered to y=11)
-setBlock(l2Tiles, l2W, 14, 11, 8, 1, 3);  // Wall top platform
-setBlock(l2Tiles, l2W, 18, 8, 8, 1, 3);   // High platform
+setBlock(l2Tiles, l2W, 6, 14, 4, 1, 3);
+setBlock(l2Tiles, l2W, 10, 12, 4, 1, 3);
+setBlock(l2Tiles, l2W, 14, 11, 2, 6, 5);
+setBlock(l2Tiles, l2W, 14, 11, 8, 1, 3);
+setBlock(l2Tiles, l2W, 18, 8, 8, 1, 3);
 
-// Step 2: Platforms leading over second wall
-setBlock(l2Tiles, l2W, 22, 14, 4, 1, 3);  // Step 1
-setBlock(l2Tiles, l2W, 25, 12, 4, 1, 3);  // Step 2
-setBlock(l2Tiles, l2W, 28, 11, 2, 6, 5);  // Wall (lowered to y=11)
-setBlock(l2Tiles, l2W, 28, 11, 8, 1, 3);  // Wall top platform
+setBlock(l2Tiles, l2W, 22, 14, 4, 1, 3);
+setBlock(l2Tiles, l2W, 25, 12, 4, 1, 3);
+setBlock(l2Tiles, l2W, 28, 11, 2, 6, 5);
+setBlock(l2Tiles, l2W, 28, 11, 8, 1, 3);
 
-// Step 3: Upper fun platforms
 setBlock(l2Tiles, l2W, 38, 13, 6, 1, 1);
 setBlock(l2Tiles, l2W, 46, 10, 6, 1, 3);
 setBlock(l2Tiles, l2W, 54, 8, 4, 1, 1);
@@ -152,8 +149,8 @@ export const Level2 = {
   ],
   springs: [],
   pawPads: [
-    { x: 8 * 32, y: 16 * 32 + 8, power: -720 },  // First wall super bounce
-    { x: 22 * 32, y: 16 * 32 + 8, power: -720 }, // Second wall super bounce
+    { x: 8 * 32, y: 16 * 32 + 8, power: -720 },
+    { x: 22 * 32, y: 16 * 32 + 8, power: -720 },
     { x: 40 * 32, y: 12 * 32 + 8, power: -680 },
     { x: 54 * 32, y: 16 * 32 + 8, power: -720 }
   ],
@@ -364,7 +361,7 @@ export const Level5 = {
   ],
   crumblingPlatforms: [
     { x: 22 * 32, y: 13 * 32, width: 64, height: 14 },
-    { x: 62 * 10 * 32, y: 10 * 32, width: 64, height: 14 }
+    { x: 62 * 32, y: 10 * 32, width: 64, height: 14 }
   ],
   enemies: [
     { x: 8 * 32, y: 18 * 32, type: 'crawler' },
@@ -407,7 +404,7 @@ export const Level6 = {
   playerStart: { x: 120, y: 400 },
   hasBoss: true,
   bossStart: { x: 42 * 32, y: 13 * 32 },
-  bossOptions: { name: '魔化蟲皇・終極真身', hp: 60, isFinalBoss: true },
+  bossOptions: { name: '魔化蟲皇・終極真身', hp: 45, isFinalBoss: false },
   portal: { x: 28 * 32, y: 3 * 32 },
   collectibles: [
     { x: 11 * 32, y: 9 * 32, type: 'persimmon' },
@@ -424,4 +421,290 @@ export const Level6 = {
   enemies: []
 };
 
-export const LEVELS = [Level1, Level2, Level3, Level4, Level5, Level6];
+// --- LEVEL 7: 激流瀑布・柿柿泳渡！ (Water Cascades) ---
+const l7W = 95;
+const l7H = 20;
+const l7Tiles = createGrid(l7W, l7H, 0);
+
+// Riverbanks & Island Floors
+setBlock(l7Tiles, l7W, 0, 17, 20, 3, 1);
+setBlock(l7Tiles, l7W, 0, 18, 20, 2, 2);
+
+// Whirlpool Gap 1
+setBlock(l7Tiles, l7W, 20, 19, 14, 1, 4);
+setBlock(l7Tiles, l7W, 34, 17, 18, 3, 1);
+setBlock(l7Tiles, l7W, 34, 18, 18, 2, 2);
+
+// Whirlpool Gap 2
+setBlock(l7Tiles, l7W, 52, 19, 16, 1, 4);
+setBlock(l7Tiles, l7W, 68, 17, 26, 3, 1);
+setBlock(l7Tiles, l7W, 68, 18, 26, 2, 2);
+
+// Cascading River Platforms & Bridges
+setBlock(l7Tiles, l7W, 8, 13, 6, 1, 3);
+setBlock(l7Tiles, l7W, 16, 10, 6, 1, 3);
+setBlock(l7Tiles, l7W, 24, 7, 7, 1, 1);
+setBlock(l7Tiles, l7W, 36, 12, 6, 1, 3);
+setBlock(l7Tiles, l7W, 44, 9, 7, 1, 3);
+setBlock(l7Tiles, l7W, 56, 12, 8, 1, 1);
+setBlock(l7Tiles, l7W, 66, 8, 6, 1, 3);
+setBlock(l7Tiles, l7W, 76, 12, 6, 1, 3);
+setBlock(l7Tiles, l7W, 84, 8, 8, 1, 3);
+
+// Boundaries
+setBlock(l7Tiles, l7W, 0, 0, 1, 20, 5);
+setBlock(l7Tiles, l7W, 94, 0, 1, 20, 5);
+
+export const Level7 = {
+  name: '第七關：激流瀑布・柿柿泳渡！',
+  theme: 'water',
+  heroSprite: './assets/hero_level7.png',
+  width: l7W,
+  height: l7H,
+  tiles: l7Tiles,
+  playerStart: { x: 80, y: 460 },
+  portal: { x: 88 * 32, y: 15 * 32 },
+  collectibles: [
+    { x: 10 * 32, y: 11 * 32, type: 'persimmon' },
+    { x: 18 * 32, y: 8 * 32, type: 'ingot' },
+    { x: 27 * 32, y: 5 * 32, type: 'heart' },
+    { x: 38 * 32, y: 10 * 32, type: 'persimmon' },
+    { x: 46 * 32, y: 7 * 32, type: 'ingot' },
+    { x: 60 * 32, y: 10 * 32, type: 'persimmon' },
+    { x: 70 * 32, y: 6 * 32, type: 'ingot' },
+    { x: 86 * 32, y: 6 * 32, type: 'persimmon' }
+  ],
+  springs: [
+    { x: 18 * 32, y: 16 * 32 + 8, power: -720 },
+    { x: 50 * 32, y: 16 * 32 + 8, power: -740 },
+    { x: 74 * 32, y: 16 * 32 + 8, power: -720 }
+  ],
+  movingPlatforms: [
+    { x: 22 * 32, y: 15 * 32, width: 70, height: 14, moveX: 130, moveY: 0, speed: 70 },
+    { x: 54 * 32, y: 14 * 32, width: 70, height: 14, moveX: 0, moveY: -150, speed: 75 }
+  ],
+  crumblingPlatforms: [
+    { x: 28 * 32, y: 11 * 32, width: 64, height: 14 },
+    { x: 62 * 32, y: 10 * 32, width: 64, height: 14 }
+  ],
+  enemies: [
+    { x: 12 * 32, y: 16 * 32, type: 'crawler' },
+    { x: 26 * 32, y: 5 * 32, type: 'turret' },
+    { x: 40 * 32, y: 16 * 32, type: 'crawler' },
+    { x: 48 * 32, y: 6 * 32, type: 'flyer' },
+    { x: 62 * 32, y: 6 * 32, type: 'flyer' },
+    { x: 78 * 32, y: 16 * 32, type: 'turret' },
+    { x: 84 * 32, y: 16 * 32, type: 'crawler' }
+  ]
+};
+
+// --- LEVEL 8: 月光甜柿・夜市迷城！ (Night Market Neon Maze) ---
+const l8W = 100;
+const l8H = 22;
+const l8Tiles = createGrid(l8W, l8H, 0);
+
+// Night street floor
+setBlock(l8Tiles, l8W, 0, 19, 22, 3, 1);
+setBlock(l8Tiles, l8W, 0, 20, 22, 2, 2);
+
+// Alley Trap 1
+setBlock(l8Tiles, l8W, 22, 21, 14, 1, 4);
+setBlock(l8Tiles, l8W, 36, 18, 16, 4, 1);
+setBlock(l8Tiles, l8W, 36, 19, 16, 3, 2);
+
+// Alley Trap 2
+setBlock(l8Tiles, l8W, 52, 21, 16, 1, 4);
+setBlock(l8Tiles, l8W, 68, 18, 16, 4, 1);
+setBlock(l8Tiles, l8W, 68, 19, 16, 3, 2);
+
+// Alley Trap 3
+setBlock(l8Tiles, l8W, 84, 21, 8, 1, 4);
+setBlock(l8Tiles, l8W, 92, 17, 8, 5, 1);
+setBlock(l8Tiles, l8W, 92, 18, 8, 4, 2);
+
+// Rooftop neon platforms
+setBlock(l8Tiles, l8W, 10, 15, 6, 1, 3);
+setBlock(l8Tiles, l8W, 18, 11, 8, 1, 3);
+setBlock(l8Tiles, l8W, 28, 7, 7, 1, 1);
+setBlock(l8Tiles, l8W, 40, 13, 6, 1, 3);
+setBlock(l8Tiles, l8W, 50, 9, 8, 1, 3);
+setBlock(l8Tiles, l8W, 60, 6, 6, 1, 1);
+setBlock(l8Tiles, l8W, 72, 12, 7, 1, 3);
+setBlock(l8Tiles, l8W, 82, 8, 8, 1, 3);
+
+// Boundaries
+setBlock(l8Tiles, l8W, 0, 0, 1, 22, 5);
+setBlock(l8Tiles, l8W, 99, 0, 1, 22, 5);
+
+export const Level8 = {
+  name: '第八關：月光甜柿・夜市迷城！',
+  theme: 'night',
+  heroSprite: './assets/hero_level8.png',
+  width: l8W,
+  height: l8H,
+  tiles: l8Tiles,
+  playerStart: { x: 80, y: 520 },
+  portal: { x: 94 * 32, y: 15 * 32 },
+  collectibles: [
+    { x: 12 * 32, y: 13 * 32, type: 'persimmon' },
+    { x: 20 * 32, y: 9 * 32, type: 'ingot' },
+    { x: 30 * 32, y: 5 * 32, type: 'heart' },
+    { x: 42 * 32, y: 11 * 32, type: 'persimmon' },
+    { x: 53 * 32, y: 7 * 32, type: 'ingot' },
+    { x: 63 * 32, y: 4 * 32, type: 'persimmon' },
+    { x: 75 * 32, y: 10 * 32, type: 'ingot' },
+    { x: 85 * 32, y: 6 * 32, type: 'persimmon' }
+  ],
+  springs: [
+    { x: 16 * 32, y: 18 * 32 + 8, power: -740 },
+    { x: 48 * 32, y: 17 * 32 + 8, power: -760 },
+    { x: 80 * 32, y: 17 * 32 + 8, power: -760 }
+  ],
+  movingPlatforms: [
+    { x: 24 * 32, y: 16 * 32, width: 70, height: 14, moveX: 140, moveY: 0, speed: 75 },
+    { x: 56 * 32, y: 15 * 32, width: 70, height: 14, moveX: 0, moveY: -160, speed: 80 }
+  ],
+  crumblingPlatforms: [
+    { x: 26 * 32, y: 13 * 32, width: 64, height: 14 },
+    { x: 66 * 32, y: 11 * 32, width: 64, height: 14 }
+  ],
+  enemies: [
+    { x: 14 * 32, y: 18 * 32, type: 'crawler' },
+    { x: 22 * 32, y: 5 * 32, type: 'flyer' },
+    { x: 42 * 32, y: 17 * 32, type: 'turret' },
+    { x: 54 * 32, y: 4 * 32, type: 'flyer' },
+    { x: 70 * 32, y: 17 * 32, type: 'crawler' },
+    { x: 78 * 32, y: 5 * 32, type: 'flyer' },
+    { x: 88 * 32, y: 16 * 32, type: 'turret' }
+  ]
+};
+
+// --- LEVEL 9: 冰雪仙境・滑溜冰山！ (Ice Peak Glider) ---
+const l9W = 105;
+const l9H = 22;
+const l9Tiles = createGrid(l9W, l9H, 0);
+
+// Ice floors
+setBlock(l9Tiles, l9W, 0, 19, 20, 3, 1);
+setBlock(l9Tiles, l9W, 0, 20, 20, 2, 2);
+
+// Ice Chasm 1
+setBlock(l9Tiles, l9W, 20, 21, 16, 1, 4);
+setBlock(l9Tiles, l9W, 36, 18, 18, 4, 1);
+setBlock(l9Tiles, l9W, 36, 19, 18, 3, 2);
+
+// Ice Chasm 2
+setBlock(l9Tiles, l9W, 54, 21, 18, 1, 4);
+setBlock(l9Tiles, l9W, 72, 18, 18, 4, 1);
+setBlock(l9Tiles, l9W, 72, 19, 18, 3, 2);
+
+// Ice Chasm 3
+setBlock(l9Tiles, l9W, 90, 21, 6, 1, 4);
+setBlock(l9Tiles, l9W, 96, 17, 9, 5, 1);
+setBlock(l9Tiles, l9W, 96, 18, 9, 4, 2);
+
+// Ice Glider platforms
+setBlock(l9Tiles, l9W, 8, 14, 6, 1, 3);
+setBlock(l9Tiles, l9W, 16, 10, 7, 1, 3);
+setBlock(l9Tiles, l9W, 26, 6, 6, 1, 1);
+setBlock(l9Tiles, l9W, 38, 12, 7, 1, 3);
+setBlock(l9Tiles, l9W, 48, 8, 8, 1, 3);
+setBlock(l9Tiles, l9W, 60, 6, 6, 1, 1);
+setBlock(l9Tiles, l9W, 74, 12, 8, 1, 3);
+setBlock(l9Tiles, l9W, 86, 8, 7, 1, 3);
+
+// Boundaries
+setBlock(l9Tiles, l9W, 0, 0, 1, 22, 5);
+setBlock(l9Tiles, l9W, 104, 0, 1, 22, 5);
+
+export const Level9 = {
+  name: '第九關：冰雪仙境・滑溜冰山！',
+  theme: 'ice',
+  heroSprite: './assets/hero_level9.png',
+  width: l9W,
+  height: l9H,
+  tiles: l9Tiles,
+  playerStart: { x: 80, y: 520 },
+  portal: { x: 99 * 32, y: 15 * 32 },
+  collectibles: [
+    { x: 10 * 32, y: 12 * 32, type: 'persimmon' },
+    { x: 18 * 32, y: 8 * 32, type: 'ingot' },
+    { x: 28 * 32, y: 4 * 32, type: 'heart' },
+    { x: 40 * 32, y: 10 * 32, type: 'persimmon' },
+    { x: 51 * 32, y: 6 * 32, type: 'ingot' },
+    { x: 63 * 32, y: 4 * 32, type: 'persimmon' },
+    { x: 77 * 32, y: 10 * 32, type: 'ingot' },
+    { x: 89 * 32, y: 6 * 32, type: 'persimmon' }
+  ],
+  springs: [
+    { x: 14 * 32, y: 18 * 32 + 8, power: -750 },
+    { x: 50 * 32, y: 17 * 32 + 8, power: -760 },
+    { x: 86 * 32, y: 17 * 32 + 8, power: -760 }
+  ],
+  movingPlatforms: [
+    { x: 22 * 32, y: 15 * 32, width: 70, height: 14, moveX: 140, moveY: 0, speed: 75 },
+    { x: 58 * 32, y: 14 * 32, width: 70, height: 14, moveX: 0, moveY: -160, speed: 80 }
+  ],
+  crumblingPlatforms: [
+    { x: 24 * 32, y: 12 * 32, width: 64, height: 14 },
+    { x: 68 * 32, y: 10 * 32, width: 64, height: 14 }
+  ],
+  enemies: [
+    { x: 10 * 32, y: 18 * 32, type: 'crawler' },
+    { x: 20 * 32, y: 4 * 32, type: 'flyer' },
+    { x: 42 * 32, y: 17 * 32, type: 'turret' },
+    { x: 54 * 32, y: 4 * 32, type: 'flyer' },
+    { x: 76 * 32, y: 17 * 32, type: 'crawler' },
+    { x: 84 * 32, y: 4 * 32, type: 'flyer' },
+    { x: 94 * 32, y: 16 * 32, type: 'turret' }
+  ]
+};
+
+// --- LEVEL 10: 混沌火焰・終極魔王決戰！ (Ultimate Final Boss Arena) ---
+const l10W = 65;
+const l10H = 18;
+const l10Tiles = createGrid(l10W, l10H, 0);
+
+// Grand Colosseum Floor
+setBlock(l10Tiles, l10W, 0, 15, 65, 3, 1);
+setBlock(l10Tiles, l10W, 0, 16, 65, 2, 2);
+
+// Elevated Battle Pillars
+setBlock(l10Tiles, l10W, 8, 11, 8, 1, 3);
+setBlock(l10Tiles, l10W, 49, 11, 8, 1, 3);
+setBlock(l10Tiles, l10W, 20, 8, 8, 1, 3);
+setBlock(l10Tiles, l10W, 37, 8, 8, 1, 3);
+setBlock(l10Tiles, l10W, 27, 5, 11, 1, 3);
+
+// Boundaries
+setBlock(l10Tiles, l10W, 0, 0, 2, 18, 5);
+setBlock(l10Tiles, l10W, 63, 0, 2, 18, 5);
+
+export const Level10 = {
+  name: '第十關：混沌火焰・終極魔王決戰！',
+  theme: 'volcano_boss',
+  heroSprite: './assets/hero_level10.png',
+  width: l10W,
+  height: l10H,
+  tiles: l10Tiles,
+  playerStart: { x: 120, y: 400 },
+  hasBoss: true,
+  bossStart: { x: 46 * 32, y: 13 * 32 },
+  bossOptions: { name: '混沌滅世魔皇', hp: 75, isFinalBoss: true },
+  portal: { x: 31 * 32, y: 3 * 32 },
+  collectibles: [
+    { x: 11 * 32, y: 9 * 32, type: 'persimmon' },
+    { x: 52 * 32, y: 9 * 32, type: 'persimmon' },
+    { x: 31 * 32, y: 3 * 32, type: 'heart' },
+    { x: 33 * 32, y: 3 * 32, type: 'ingot' }
+  ],
+  springs: [
+    { x: 4 * 32, y: 14 * 32 + 8, power: -740 },
+    { x: 59 * 32, y: 14 * 32 + 8, power: -740 }
+  ],
+  movingPlatforms: [],
+  crumblingPlatforms: [],
+  enemies: []
+};
+
+export const LEVELS = [Level1, Level2, Level3, Level4, Level5, Level6, Level7, Level8, Level9, Level10];

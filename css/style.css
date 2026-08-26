@@ -65,6 +65,7 @@ canvas {
   display: flex;
   gap: 8px;
   z-index: 50;
+  align-items: center;
 }
 
 .tool-btn {
@@ -78,25 +79,22 @@ canvas {
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .tool-btn:hover {
-  background: var(--primary-color);
+  background: rgba(60, 40, 90, 0.95);
   border-color: var(--accent-gold);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.4);
 }
 
 .tool-btn:active {
-  transform: translateY(0);
+  transform: scale(0.96);
 }
 
-/* Install PWA Highlight Button */
 #btn-pwa-install {
-  background: linear-gradient(135deg, #ff7700, #ff2255);
-  border: 1px solid #ffe066;
-  color: #fff;
-  box-shadow: 0 0 12px rgba(255, 119, 0, 0.6);
+  background: linear-gradient(135deg, #ff9900, #ff3300);
+  border-color: #ffe066;
   animation: pulse-glow 2s infinite;
 }
 
@@ -126,7 +124,7 @@ canvas {
   background: var(--panel-bg);
   border: 2px solid var(--primary-color);
   border-radius: 16px;
-  padding: 30px 40px;
+  padding: 24px 32px;
   max-width: 520px;
   width: 90%;
   text-align: center;
@@ -146,10 +144,10 @@ canvas {
 }
 
 .hero-banner {
-  width: 140px;
-  height: 140px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
-  margin: 0 auto 12px;
+  margin: 0 auto 8px;
   filter: drop-shadow(0 8px 16px rgba(255, 119, 0, 0.5));
   animation: hero-bounce 2s infinite ease-in-out;
 }
@@ -160,23 +158,23 @@ canvas {
 }
 
 h1.game-title {
-  font-size: 32px;
+  font-size: 28px;
   color: var(--accent-gold);
   text-shadow: 0 2px 10px rgba(255, 119, 0, 0.8), 0 0 20px rgba(255, 204, 0, 0.5);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   letter-spacing: 2px;
 }
 
 p.game-subtitle {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .btn-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin-top: 15px;
 }
 
@@ -184,7 +182,7 @@ p.game-subtitle {
   background: linear-gradient(135deg, var(--primary-color), #ff4500);
   border: 1px solid var(--accent-gold);
   color: #ffffff;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   padding: 12px 24px;
   border-radius: 28px;
@@ -194,7 +192,7 @@ p.game-subtitle {
 }
 
 .primary-btn:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
   box-shadow: 0 8px 25px rgba(255, 140, 0, 0.7);
 }
 
@@ -206,9 +204,9 @@ p.game-subtitle {
   background: rgba(45, 35, 65, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 24px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -224,13 +222,13 @@ p.game-subtitle {
   background: rgba(15, 10, 25, 0.6);
   border-radius: 10px;
   padding: 14px;
-  margin: 18px 0;
+  margin: 14px 0;
   border: 1px solid rgba(255, 119, 0, 0.3);
 }
 
 .stats-panel p {
-  font-size: 16px;
-  margin: 6px 0;
+  font-size: 15px;
+  margin: 4px 0;
   color: var(--accent-gold);
   font-weight: bold;
 }
@@ -272,26 +270,27 @@ p.game-subtitle {
   max-width: 680px;
   max-height: 92vh;
   overflow-y: auto;
-  padding: 24px 30px;
+  padding: 20px 28px;
 }
 
 .start-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
 .start-header .hero-banner {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   margin: 0;
 }
 
 .start-header h1.game-title {
   margin-bottom: 2px;
   text-align: left;
+  font-size: 26px;
 }
 
 .start-header p.game-subtitle {
@@ -303,55 +302,54 @@ p.game-subtitle {
   background: rgba(18, 12, 30, 0.75);
   border: 1px solid rgba(255, 120, 0, 0.4);
   border-radius: 12px;
-  padding: 16px;
-  margin: 12px 0 16px;
+  padding: 14px;
+  margin: 10px 0 14px;
   text-align: left;
 }
 
 .guide-box-title {
   color: var(--accent-gold);
-  font-size: 16px;
-  margin-bottom: 12px;
+  font-size: 15px;
+  margin-bottom: 10px;
   text-align: center;
   letter-spacing: 1px;
 }
 
 .guide-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
 .guide-card {
-  background: rgba(35, 25, 55, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(35, 25, 55, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 10px 12px;
-  transition: all 0.2s ease;
+  padding: 8px 10px;
 }
 
 .guide-card.highlight-card {
-  border-color: rgba(255, 170, 0, 0.6);
-  background: rgba(50, 30, 70, 0.8);
+  border-color: rgba(255, 180, 0, 0.45);
+  background: rgba(45, 30, 70, 0.75);
 }
 
 .card-header {
+  font-size: 13px;
+  color: #fff;
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #fff;
-  margin-bottom: 4px;
+  gap: 5px;
 }
 
 .card-icon {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .card-desc {
   font-size: 12px;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.35;
   margin: 0;
 }
 
@@ -359,22 +357,177 @@ p.game-subtitle {
   color: var(--accent-gold);
 }
 
-@media (max-width: 600px) {
-  .start-header {
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
-  .start-header h1.game-title,
-  .start-header p.game-subtitle {
-    text-align: center;
-  }
-  .guide-grid {
-    grid-template-columns: 1fr;
-  }
-  .start-modal-content {
-    padding: 16px;
-  }
+/* --- ACCOUNT / PROFILE BAR STYLES --- */
+.account-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(40, 25, 65, 0.85);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.account-info-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #fff;
+}
+
+.account-name-badge {
+  font-weight: bold;
+  color: #ffd700;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.account-coins-badge {
+  color: #a3ff44;
+  font-weight: bold;
+}
+
+.account-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-pill {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 14px;
+  background: rgba(60, 40, 90, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-pill:hover {
+  background: var(--primary-color);
+  border-color: #ffd700;
+}
+
+/* --- LOGIN MODAL STYLES --- */
+.login-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(15, 10, 25, 0.85);
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  margin: 14px 0 16px;
+  outline: none;
+  text-align: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.login-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+}
+
+.user-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+  max-height: 120px;
+  overflow-y: auto;
+  justify-content: center;
+}
+
+.user-history-chip {
+  background: rgba(45, 30, 70, 0.7);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #eee;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.user-history-chip:hover {
+  background: rgba(80, 45, 120, 0.95);
+  border-color: #ffd700;
+  color: #ffd700;
+  transform: translateY(-2px);
+}
+
+.user-history-chip .chip-coins {
+  font-size: 11px;
+  color: #a3ff44;
+}
+
+/* --- PROFILE / STATS MODAL STYLES --- */
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.profile-stat-box {
+  background: rgba(25, 15, 45, 0.8);
+  border: 1px solid rgba(255, 170, 0, 0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.profile-stat-box .stat-label {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 3px;
+}
+
+.profile-stat-box .stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.scores-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0 16px;
+  font-size: 13px;
+}
+
+.scores-table th {
+  background: rgba(0, 0, 0, 0.3);
+  color: #ffd700;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.4);
+  text-align: left;
+}
+
+.scores-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.scores-table tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.score-val-badge {
+  font-weight: bold;
+  color: #a3ff44;
+  font-family: monospace;
+  font-size: 14px;
 }
 
 /* --- MOBILE TOUCH CONTROLS OVERLAY --- */
@@ -504,10 +657,16 @@ p.game-subtitle {
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .modal-content {
-    padding: 20px;
+    padding: 16px;
   }
   h1.game-title {
-    font-size: 24px;
+    font-size: 22px;
+  }
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+  .profile-stats-grid {
+    grid-template-columns: 1fr;
   }
   .dpad-container {
     bottom: 12px;
@@ -526,10 +685,10 @@ p.game-subtitle {
 /* --- LEVEL SELECT MODAL STYLES --- */
 .level-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin: 16px 0;
-  max-height: 55vh;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 10px 0 16px;
+  max-height: 40vh;
   overflow-y: auto;
 }
 
@@ -537,13 +696,13 @@ p.game-subtitle {
   background: rgba(45, 30, 70, 0.8);
   border: 2px solid rgba(255, 170, 0, 0.4);
   border-radius: 12px;
-  padding: 14px 10px;
+  padding: 12px 8px;
   color: #fff;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   transition: all 0.2s ease;
 }
 
@@ -562,13 +721,13 @@ p.game-subtitle {
 }
 
 .level-card-num {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: bold;
   color: #ffd700;
 }
 
 .level-card-name {
-  font-size: 12px;
+  font-size: 11px;
   color: #ddd;
   text-align: center;
 }
@@ -577,23 +736,23 @@ p.game-subtitle {
 .minigames-grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin: 16px 0;
+  gap: 12px;
+  margin: 12px 0;
 }
 
 .minigame-card {
   background: rgba(35, 25, 55, 0.85);
   border: 2px solid rgba(255, 215, 0, 0.4);
   border-radius: 14px;
-  padding: 16px 20px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   text-align: left;
   transition: all 0.2s ease;
 }
 
-.minigame-card:hover {
+.minigame-card:hover:not(.locked) {
   border-color: #ffd700;
   background: rgba(55, 35, 85, 0.95);
   transform: translateY(-2px);
@@ -601,11 +760,11 @@ p.game-subtitle {
 }
 
 .minigame-icon {
-  font-size: 38px;
+  font-size: 34px;
   flex-shrink: 0;
   background: rgba(0, 0, 0, 0.3);
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -619,15 +778,15 @@ p.game-subtitle {
 
 .minigame-info h3 {
   color: #ffd700;
-  font-size: 17px;
-  margin-bottom: 4px;
+  font-size: 16px;
+  margin-bottom: 3px;
 }
 
 .minigame-info p {
   color: #ccc;
   font-size: 12px;
   line-height: 1.35;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .minigame-meta {
@@ -637,7 +796,7 @@ p.game-subtitle {
 }
 
 .btn-play-minigame {
-  padding: 10px 18px;
-  font-size: 14px;
+  padding: 8px 16px;
+  font-size: 13px;
   flex-shrink: 0;
 }

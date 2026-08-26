@@ -1,4 +1,4 @@
-// Save Manager: Multi-Account Management, Passwordless Login & 6 Mini-Games Statistics
+// Save Manager: Multi-Account Management, Passwordless Login & 10 Mini-Games Statistics
 export class SaveManager {
   constructor() {
     this.storageKeyProfiles = 'persimmon_adventure_profiles_v3';
@@ -27,18 +27,22 @@ export class SaveManager {
       username: username,
       createdAt: Date.now(),
       lastPlayed: Date.now(),
-      highestLevel: 1, // 1..6
+      highestLevel: 1, // 1..10
       currentLevel: 1, // Checkpoint
       totalCoins: 0,   // 總累積金額 (甜柿金幣)
       gameCompleted: false,
-      levelScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+      levelScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 },
       miniGameScores: {
         pawStomp: 0,
         catchCoins: 0,
         whackMole: 0,
         shootingGallery: 0,
         cloudGlider: 0,
-        bossParry: 0
+        bossParry: 0,
+        riverRaft: 0,
+        nightMarket: 0,
+        iceGlider: 0,
+        rhythmParry: 0
       },
       unlockedMiniGames: ['pawStomp']
     };
@@ -165,6 +169,10 @@ export class SaveManager {
     if (lvl >= 4 && !p.unlockedMiniGames.includes('whackMole')) p.unlockedMiniGames.push('whackMole');
     if (lvl >= 5 && !p.unlockedMiniGames.includes('shootingGallery')) p.unlockedMiniGames.push('shootingGallery');
     if (lvl >= 6 && !p.unlockedMiniGames.includes('cloudGlider')) p.unlockedMiniGames.push('cloudGlider');
+    if (lvl >= 7 && !p.unlockedMiniGames.includes('bossParry')) p.unlockedMiniGames.push('bossParry');
+    if (lvl >= 8 && !p.unlockedMiniGames.includes('riverRaft')) p.unlockedMiniGames.push('riverRaft');
+    if (lvl >= 9 && !p.unlockedMiniGames.includes('nightMarket')) p.unlockedMiniGames.push('nightMarket');
+    if (lvl >= 10 && !p.unlockedMiniGames.includes('iceGlider')) p.unlockedMiniGames.push('iceGlider');
 
     this.saveAllProfiles();
   }
@@ -172,9 +180,9 @@ export class SaveManager {
   completeGame() {
     const p = this.data;
     p.gameCompleted = true;
-    p.highestLevel = 6;
-    if (!p.unlockedMiniGames.includes('bossParry')) {
-      p.unlockedMiniGames.push('bossParry');
+    p.highestLevel = 10;
+    if (!p.unlockedMiniGames.includes('rhythmParry')) {
+      p.unlockedMiniGames.push('rhythmParry');
     }
     p.lastPlayed = Date.now();
     this.saveAllProfiles();

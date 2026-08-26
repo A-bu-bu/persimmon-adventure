@@ -1,4 +1,4 @@
-// Main Game Lifecycle, Loop & State Machine with 6 Mini-Games
+// Main Game Lifecycle, Loop & State Machine with 10 Mini-Games
 import { input } from './engine/input.js';
 import { audio } from './engine/audio.js';
 import { Camera } from './engine/camera.js';
@@ -20,17 +20,21 @@ import {
 import { HUD } from './ui/hud.js';
 import { initPWA } from './pwa.js';
 
-// 6 Mini-Games
+// 10 Mini-Games
 import { PawStompGame } from './minigames/pawStompGame.js';
 import { CatchCoinsGame } from './minigames/catchCoinsGame.js';
 import { WhackMoleGame } from './minigames/whackMoleGame.js';
 import { ShootingGalleryGame } from './minigames/shootingGalleryGame.js';
 import { CloudGliderGame } from './minigames/cloudGliderGame.js';
 import { BossParryGame } from './minigames/bossParryGame.js';
+import { RiverRaftGame } from './minigames/riverRaftGame.js';
+import { NightMarketGame } from './minigames/nightMarketGame.js';
+import { IceGliderGame } from './minigames/iceGliderGame.js';
+import { RhythmParryGame } from './minigames/rhythmParryGame.js';
 
 class Game {
   constructor() {
-    console.log('[Game] Initializing Persimmon Adventure with 6 Unique Mini-Games...');
+    console.log('[Game] Initializing Persimmon Adventure with 10 Unique Mini-Games...');
     this.canvas = document.getElementById('gameCanvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -98,20 +102,27 @@ class Game {
       const rect = this.canvas.getBoundingClientRect();
       const scaleX = this.virtualWidth / rect.width;
       const scaleY = this.virtualHeight / rect.height;
-      const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-      const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return {
         x: (clientX - rect.left) * scaleX,
         y: (clientY - rect.top) * scaleY
       };
     };
 
-    this.canvas.addEventListener('click', (e) => {
+    const handleAction = (e) => {
       if (this.state === 'MINIGAME' && this.currentMiniGame) {
         const pos = getCanvasPos(e);
-        this.currentMiniGame.handleClick(pos.x, pos.y);
+        if (this.currentMiniGame.handleClick) {
+          this.currentMiniGame.handleClick(pos.x, pos.y);
+        }
       }
-    });
+    };
+
+    this.canvas.addEventListener('click', handleAction);
+    this.canvas.addEventListener('touchstart', (e) => {
+      handleAction(e);
+    }, { passive: true });
 
     this.canvas.addEventListener('mousemove', (e) => {
       if (this.state === 'MINIGAME' && this.currentMiniGame && this.currentMiniGame.handleMouseMove) {
@@ -128,9 +139,8 @@ class Game {
     }, { passive: true });
 
     window.addEventListener('keydown', (e) => {
-      if (this.state === 'MINIGAME' && this.currentMiniGame) {
-        if (this.currentMiniGame.handleKeyDown) this.currentMiniGame.handleKeyDown(e.code);
-        if (this.currentMiniGame.handleKey) this.currentMiniGame.handleKey(e.key);
+      if (this.state === 'MINIGAME' && this.currentMiniGame && this.currentMiniGame.handleKeyDown) {
+        this.currentMiniGame.handleKeyDown(e.code);
       }
     });
 
@@ -142,232 +152,262 @@ class Game {
   }
 
   updateStartMenuState() {
-    const saveData = saveManager.data;
-    const username = saveManager.currentUsername || '背柿小勇士';
+    const p = saveManager.data;
+    const uname = saveManager.currentUsername || '背柿小勇士';
 
-    // Update username badges
-    const userDisplay = document.getElementById('current-user-display');
-    if (userDisplay) userDisplay.textContent = username;
+    const accountBarName = document.getElementById('account-bar-username');
+    if (accountBarName) accountBarName.textContent = uname;
 
-    const topUser = document.getElementById('top-username');
-    if (topUser) topUser.textContent = username;
+    const accountBarCoins = document.getElementById('account-bar-coins');
+    if (accountBarCoins) accountBarCoins.textContent = `$${p.totalCoins || 0}`;
 
-    const userCoins = document.getElementById('current-user-coins');
-    if (userCoins) userCoins.textContent = `$${saveData.totalCoins || 0}`;
+    const accountBarLevel = document.getElementById('account-bar-level');
+    if (accountBarLevel) accountBarLevel.textContent = `第 ${p.highestLevel || 1} 關`;
 
-    // Continue button
-    const continueBtn = document.getElementById('btn-continue-game');
-    const continueLvlNum = document.getElementById('continue-lvl-num');
+    const userBadge = document.getElementById('current-user-badge');
+    if (userBadge) {
+      userBadge.innerHTML = `👤 當前帳號：<b>${uname}</b> (已到第 ${p.highestLevel || 1} 關 | 總資產: $${p.totalCoins || 0})`;
+    }
 
-    if (continueBtn && continueLvlNum) {
-      if (saveData.highestLevel > 1) {
-        continueBtn.style.display = 'block';
-        continueLvlNum.textContent = saveData.currentLevel || saveData.highestLevel;
+    const btnResume = document.getElementById('btn-resume-game');
+    if (btnResume) {
+      if (p.highestLevel > 1 || (p.levelScores && Object.keys(p.levelScores).some(k => p.levelScores[k] > 0))) {
+        btnResume.style.display = 'inline-block';
+        btnResume.textContent = `▶ 繼續冒險 (第 ${p.highestLevel || 1} 關)`;
       } else {
-        continueBtn.style.display = 'none';
+        btnResume.style.display = 'none';
       }
     }
   }
 
   bindUIEvents() {
-    const attachButton = (id, handler) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.onclick = (e) => {
-        if (e) e.preventDefault();
-        handler(e);
-      };
-    };
-
-    // --- 帳號登入與切換 ---
-    const loginModal = document.getElementById('modal-login');
-    const inputUsername = document.getElementById('input-username');
-
-    const openLoginModal = () => {
-      if (inputUsername) inputUsername.value = saveManager.currentUsername || '';
-      this.renderUserHistory();
-      loginModal.style.display = 'flex';
-      setTimeout(() => inputUsername?.focus(), 100);
-    };
-
-    attachButton('btn-switch-user', openLoginModal);
-    attachButton('btn-close-login', () => {
-      loginModal.style.display = 'none';
+    // 1. Account Button -> Show Login Modal
+    document.getElementById('btn-account-switch')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      audio.resume();
+      this.openLoginModal();
     });
 
-    const doLogin = () => {
-      const name = (inputUsername?.value || '').trim();
-      if (!name) {
-        alert('請輸入勇士暱稱或帳號名稱！');
-        return;
+    // Top-bar Account Button
+    document.getElementById('btn-top-account')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      audio.resume();
+      this.openLoginModal();
+    });
+
+    // 2. Profile Stats Modal
+    document.getElementById('btn-profile-stats')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      audio.resume();
+      this.openProfileModal();
+    });
+
+    document.getElementById('btn-profile-stats-menu')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      audio.resume();
+      this.openProfileModal();
+    });
+
+    document.getElementById('btn-close-profile')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('modal-profile').style.display = 'none';
+    });
+
+    // 3. Login Modal Actions
+    document.getElementById('btn-do-login')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.handleLoginSubmit();
+    });
+
+    document.getElementById('login-username-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.handleLoginSubmit();
       }
-      saveManager.login(name);
-      loginModal.style.display = 'none';
-      this.updateStartMenuState();
-      console.log('[Auth] Switched active user to:', name);
-    };
-
-    attachButton('btn-submit-login', doLogin);
-    inputUsername?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') doLogin();
     });
 
-    // --- 個人戰績榮譽榜 ---
-    const profileModal = document.getElementById('modal-profile');
-    const openProfileModal = () => {
-      this.renderProfileStats();
-      profileModal.style.display = 'flex';
-    };
-    attachButton('btn-view-profile', openProfileModal);
-    attachButton('btn-open-profile-top', openProfileModal);
-    attachButton('btn-close-profile', () => {
-      profileModal.style.display = 'none';
+    document.getElementById('btn-close-login')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('modal-login').style.display = 'none';
     });
 
-    // --- 遊戲開始與關卡 ---
-    attachButton('btn-start-game', () => {
-      console.log('[UI] Start New Game from Level 1 Clicked');
+    // 4. Start Game Buttons
+    document.getElementById('btn-start-game')?.addEventListener('click', () => {
       audio.resume();
       this.startNewGame();
     });
 
-    attachButton('btn-continue-game', () => {
-      console.log('[UI] Continue Game Clicked');
+    document.getElementById('btn-resume-game')?.addEventListener('click', () => {
       audio.resume();
-      const targetLvl = (saveManager.data.currentLevel || 1) - 1;
-      this.loadLevel(Math.min(LEVELS.length - 1, Math.max(0, targetLvl)));
+      const resumeLvl = Math.max(0, (saveManager.data.highestLevel || 1) - 1);
+      this.loadLevel(resumeLvl);
       this.setState('PLAYING');
     });
 
-    // Level Select Modal
-    const levelSelectModal = document.getElementById('modal-level-select');
-    attachButton('btn-open-level-select', () => {
-      console.log('[UI] Open Level Select Clicked');
+    // 5. Level Select Modal
+    document.getElementById('btn-level-select')?.addEventListener('click', () => {
+      audio.resume();
       this.renderLevelSelectGrid();
-      levelSelectModal.style.display = 'flex';
-    });
-    attachButton('btn-close-level-select', () => {
-      levelSelectModal.style.display = 'none';
+      document.getElementById('modal-level-select').style.display = 'flex';
     });
 
-    // Mini-Games Modal
-    const minigamesModal = document.getElementById('modal-minigames');
-    const openMiniGames = (e) => {
-      if (e) e.preventDefault();
-      console.log('[UI] Open Mini-Games Clicked');
+    document.getElementById('btn-close-level-select')?.addEventListener('click', () => {
+      document.getElementById('modal-level-select').style.display = 'none';
+    });
+
+    // 6. Mini Games Modal
+    const openMiniGames = () => {
+      audio.resume();
       this.renderMiniGamesModal();
-      minigamesModal.style.display = 'flex';
+      document.getElementById('modal-minigames').style.display = 'flex';
     };
-    attachButton('btn-open-minigames', openMiniGames);
-    attachButton('btn-open-minigames-top', openMiniGames);
-    attachButton('btn-close-minigames', () => {
-      minigamesModal.style.display = 'none';
+    document.getElementById('btn-minigames')?.addEventListener('click', openMiniGames);
+    document.getElementById('btn-minigames-menu')?.addEventListener('click', openMiniGames);
+
+    document.getElementById('btn-close-minigames')?.addEventListener('click', () => {
+      document.getElementById('modal-minigames').style.display = 'none';
     });
 
-    // Instructions Modal
-    const helpModal = document.getElementById('modal-help');
-    attachButton('btn-how-to-play', () => {
-      helpModal.style.display = 'flex';
-    });
-    attachButton('btn-close-help', () => {
-      helpModal.style.display = 'none';
+    // 7. How to Play Modal
+    document.getElementById('btn-how-to-play')?.addEventListener('click', () => {
+      audio.resume();
+      document.getElementById('modal-help').style.display = 'flex';
     });
 
-    // Next Level Button
-    attachButton('btn-next-level', () => {
-      this.loadNextLevel();
+    document.getElementById('btn-close-help')?.addEventListener('click', () => {
+      document.getElementById('modal-help').style.display = 'none';
     });
 
-    // Retry Level Button
-    attachButton('btn-retry-level', () => {
+    // 8. In-Game Modals
+    document.getElementById('btn-resume')?.addEventListener('click', () => {
+      this.setState('PLAYING');
+    });
+
+    document.getElementById('btn-restart')?.addEventListener('click', () => {
       this.loadLevel(this.currentLevelIndex);
       this.setState('PLAYING');
     });
 
-    // Play Again
-    attachButton('btn-play-again', () => {
+    document.getElementById('btn-retry-game')?.addEventListener('click', () => {
+      this.loadLevel(this.currentLevelIndex);
+      this.setState('PLAYING');
+    });
+
+    document.getElementById('btn-next-level')?.addEventListener('click', () => {
+      this.loadNextLevel();
+    });
+
+    document.getElementById('btn-play-again')?.addEventListener('click', () => {
       this.startNewGame();
     });
 
-    // Audio Mute Toggle
-    const soundBtn = document.getElementById('btn-toggle-sound');
-    attachButton('btn-toggle-sound', () => {
-      const isMuted = audio.toggleMute();
-      if (soundBtn) soundBtn.textContent = isMuted ? '🔇 音效: 關' : '🔊 音效: 開';
-    });
-
-    // Resume from Pause
-    attachButton('btn-resume', () => {
-      this.togglePause();
-    });
-
-    // Return to Menu
-    document.querySelectorAll('.btn-return-menu').forEach((btn) => {
-      btn.onclick = (e) => {
-        if (e) e.preventDefault();
-        audio.stopBGM();
+    document.querySelectorAll('.btn-quit-to-menu').forEach((btn) => {
+      btn.addEventListener('click', () => {
         this.setState('MENU');
-      };
+      });
     });
 
-    // Toggle Touch Controls Button
-    const touchToggleBtn = document.getElementById('btn-toggle-touch');
-    const touchOverlay = document.getElementById('touch-controls');
-    attachButton('btn-toggle-touch', () => {
-      if (touchOverlay.style.display === 'none') {
-        touchOverlay.style.display = 'block';
-        if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
-      } else {
-        touchOverlay.style.display = 'none';
-        if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 關';
+    // Top Bar Touch, Sound & Fullscreen
+    document.getElementById('btn-toggle-touch')?.addEventListener('click', () => {
+      const touchEl = document.getElementById('touch-controls');
+      const btn = document.getElementById('btn-toggle-touch');
+      if (touchEl) {
+        const isHidden = touchEl.style.display === 'none';
+        touchEl.style.display = isHidden ? 'flex' : 'none';
+        if (btn) btn.textContent = isHidden ? '🎮 觸控搖桿: 開' : '🎮 觸控搖桿: 關';
       }
     });
 
-    // Auto-detect mobile devices
-    const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || ('ontouchstart' in window);
-    if (isMobile && touchOverlay) {
-      touchOverlay.style.display = 'block';
-      if (touchToggleBtn) touchToggleBtn.textContent = '🎮 觸控搖桿: 開';
-    }
+    document.getElementById('btn-toggle-sound')?.addEventListener('click', () => {
+      const isMuted = audio.toggleMute();
+      document.getElementById('btn-toggle-sound').textContent = isMuted ? '🔇 靜音' : '🔊 音效';
+    });
+
+    document.getElementById('btn-fullscreen')?.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
   }
 
-  renderUserHistory() {
-    const list = document.getElementById('user-history-list');
-    if (!list) return;
-    list.innerHTML = '';
+  openLoginModal() {
+    this.renderAccountList();
+    const inputEl = document.getElementById('login-username-input');
+    if (inputEl) inputEl.value = '';
+    document.getElementById('modal-login').style.display = 'flex';
+    setTimeout(() => inputEl?.focus(), 100);
+  }
+
+  renderAccountList() {
+    const container = document.getElementById('account-history-list');
+    if (!container) return;
+    container.innerHTML = '';
 
     const users = saveManager.getAllUsers();
-    if (users.length === 0) {
-      list.innerHTML = '<span style="color: #888; font-size: 12px;">尚無其他歷史帳號</span>';
+    users.forEach((u) => {
+      const isCurrent = u.username === saveManager.currentUsername;
+      const item = document.createElement('div');
+      item.className = `account-item ${isCurrent ? 'active' : ''}`;
+      item.innerHTML = `
+        <div class="account-item-info">
+          <span class="name">👤 ${u.username} ${isCurrent ? '<span style="color: #ffd700; font-size: 11px;">(當前使用)</span>' : ''}</span>
+          <span class="badge">已到第 ${u.highestLevel} 關 | 總資產: $${u.totalCoins}</span>
+        </div>
+        <div class="account-item-actions">
+          ${!isCurrent ? `<button class="secondary-btn btn-switch-user" data-user="${u.username}" style="padding: 4px 10px; font-size: 12px;">切換</button>` : ''}
+          <button class="secondary-btn btn-del-user" data-user="${u.username}" style="padding: 4px 8px; font-size: 12px; color: #ff5722;">✖</button>
+        </div>
+      `;
+
+      item.querySelector('.btn-switch-user')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        saveManager.login(u.username);
+        this.updateStartMenuState();
+        this.renderAccountList();
+        document.getElementById('modal-login').style.display = 'none';
+      });
+
+      item.querySelector('.btn-del-user')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm(`確定要刪除帳號「${u.username}」的遊戲存檔紀錄嗎？`)) {
+          saveManager.deleteUser(u.username);
+          this.updateStartMenuState();
+          this.renderAccountList();
+        }
+      });
+
+      container.appendChild(item);
+    });
+  }
+
+  handleLoginSubmit() {
+    const inputEl = document.getElementById('login-username-input');
+    const name = (inputEl?.value || '').trim();
+    if (!name) {
+      alert('請輸入您的帳號名稱！');
       return;
     }
+    saveManager.login(name);
+    this.updateStartMenuState();
+    document.getElementById('modal-login').style.display = 'none';
+  }
 
-    users.forEach((u) => {
-      const chip = document.createElement('div');
-      chip.className = 'user-history-chip';
-      chip.innerHTML = `
-        <span>👤 <b>${u.username}</b></span>
-        <span class="chip-coins">🪙 $${u.totalCoins}</span>
-        <span style="font-size: 11px; color: #ffd700;">(第${u.highestLevel}關)</span>
-      `;
-      chip.onclick = () => {
-        saveManager.login(u.username);
-        document.getElementById('modal-login').style.display = 'none';
-        this.updateStartMenuState();
-      };
-      list.appendChild(chip);
-    });
+  openProfileModal() {
+    this.renderProfileStats();
+    document.getElementById('modal-profile').style.display = 'flex';
   }
 
   getMiniGamesList() {
     const highestUnlocked = saveManager.data.highestLevel || 1;
-    const isClearedAll = saveManager.data.gameCompleted || highestUnlocked >= 6;
+    const isClearedAll = saveManager.data.gameCompleted || highestUnlocked > 10;
 
     return [
       {
         id: 'pawStomp',
         name: '🐾 神速踩腳丫大對決',
-        desc: '6 方位隨機踩踏招財金腳印與調皮獸足，挑戰極速 Combo 連擊！',
+        desc: '6隻萌貓腳爪快節奏伸出！限時精準點擊踩中爪墊，比比誰的反應最快！',
         unlockCondition: '通關第 1 關',
         isUnlocked: highestUnlocked >= 2,
         scoreKey: 'pawStomp',
@@ -376,7 +416,7 @@ class Game {
       {
         id: 'catchCoins',
         name: '💰 天降財神接金鈔',
-        desc: '天降硬幣、百元鈔、千元大鈔與萬兩元寶！左右奔跑撿錢避炸彈！',
+        desc: '左右移動金柿寶籃，接住漫天掉落的柿金幣與大金元寶，小心躲避毒黑菇！',
         unlockCondition: '通關第 2 關',
         isUnlocked: highestUnlocked >= 3,
         scoreKey: 'catchCoins',
@@ -413,9 +453,45 @@ class Game {
         id: 'bossParry',
         name: '🥋 真魔王彈刀大對決',
         desc: '極限節奏格擋！在魔王暗黑彈幕到達面前瞬間揮劍「完美彈刀」反彈轟殺！',
-        unlockCondition: '擊敗第 6 關真魔王',
-        isUnlocked: isClearedAll,
+        unlockCondition: '通關第 6 關',
+        isUnlocked: highestUnlocked >= 7,
         scoreKey: 'bossParry',
+        unit: '分'
+      },
+      {
+        id: 'riverRaft',
+        name: '🌊 激流接柿・大溯源',
+        desc: '乘木筏在湍急河流上左右靈活穿梭，接住落下的鮮柿與金錠，閃避落石漂流木！',
+        unlockCondition: '通關第 7 關',
+        isUnlocked: highestUnlocked >= 8,
+        scoreKey: 'riverRaft',
+        unit: '分'
+      },
+      {
+        id: 'nightMarket',
+        name: '🌙 夜市大胃王闖關',
+        desc: '夜市攤位美食大爆發！快速點選關東煮、臭豆腐、蚵仔煎餵飽排隊客人！',
+        unlockCondition: '通關第 8 關',
+        isUnlocked: highestUnlocked >= 9,
+        scoreKey: 'nightMarket',
+        unit: '分'
+      },
+      {
+        id: 'iceGlider',
+        name: '❄️ 冰上大滑行大逃脫',
+        desc: '滑溜冰道急速滑行！考驗慣性控制，左右滑移躲避冰裂縫、冰柱與雪崩巨石！',
+        unlockCondition: '通關第 9 關',
+        isUnlocked: highestUnlocked >= 10,
+        scoreKey: 'iceGlider',
+        unit: '分'
+      },
+      {
+        id: 'rhythmParry',
+        name: '🌋 終極魔王節奏彈刀',
+        desc: '混沌滅世魔皇終極挑戰！跟隨節奏光圈完美格擋連段反擊，打出致命反彈！',
+        unlockCondition: '通關第 10 關',
+        isUnlocked: isClearedAll,
+        scoreKey: 'rhythmParry',
         unit: '分'
       }
     ];
@@ -571,7 +647,7 @@ class Game {
       });
     }
 
-    // 2. All 6 Mini-Games Table
+    // 2. All 10 Mini-Games Table
     const mgTableBody = document.getElementById('profile-minigame-scores-body');
     if (mgTableBody) {
       mgTableBody.innerHTML = '';
@@ -613,6 +689,18 @@ class Game {
     } else if (gameId === 'bossParry') {
       audio.playBGM('boss');
       this.currentMiniGame = new BossParryGame(this.canvas, () => this.exitMiniGame());
+    } else if (gameId === 'riverRaft') {
+      audio.playBGM('orchard');
+      this.currentMiniGame = new RiverRaftGame(this.canvas, () => this.exitMiniGame());
+    } else if (gameId === 'nightMarket') {
+      audio.playBGM('cave');
+      this.currentMiniGame = new NightMarketGame(this.canvas, () => this.exitMiniGame());
+    } else if (gameId === 'iceGlider') {
+      audio.playBGM('orchard');
+      this.currentMiniGame = new IceGliderGame(this.canvas, () => this.exitMiniGame());
+    } else if (gameId === 'rhythmParry') {
+      audio.playBGM('boss');
+      this.currentMiniGame = new RhythmParryGame(this.canvas, () => this.exitMiniGame());
     }
   }
 
@@ -850,7 +938,7 @@ class Game {
             if (b.pierce <= 0) b.active = false;
 
             if (this.boss.isDead) {
-              this.player.score += this.boss.isFinalBoss ? 10000 : 5000;
+              this.player.score += this.boss.isFinalBoss ? 15000 : 5000;
               saveManager.recordLevelScore(this.currentLevelIndex, this.player.score, this.player.coins);
               setTimeout(() => {
                 if (this.currentLevelIndex + 1 < LEVELS.length) {

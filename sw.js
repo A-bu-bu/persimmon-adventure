@@ -1,10 +1,10 @@
-const CACHE_NAME = 'persimmon-adventure-v9';
+﻿const CACHE_NAME = 'persimmon-adventure-v18';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './css/style.css?v=9',
-  './js/main.js?v=9',
+  './css/style.css?v=18',
+  './js/main.js?v=18',
   './js/pwa.js',
   './js/engine/audio.js',
   './js/engine/input.js',
@@ -25,9 +25,21 @@ const ASSETS_TO_CACHE = [
   './js/minigames/shootingGalleryGame.js',
   './js/minigames/cloudGliderGame.js',
   './js/minigames/bossParryGame.js',
+  './js/minigames/riverRaftGame.js',
+  './js/minigames/nightMarketGame.js',
+  './js/minigames/iceGliderGame.js',
+  './js/minigames/rhythmParryGame.js',
   './js/ui/hud.js',
   './assets/hero_transparent.png',
   './assets/hero_level2.png',
+  './assets/hero_level3.png',
+  './assets/hero_level4.png',
+  './assets/hero_level5.png',
+  './assets/hero_level6.png',
+  './assets/hero_level7.png',
+  './assets/hero_level8.png',
+  './assets/hero_level9.png',
+  './assets/hero_level10.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -35,13 +47,14 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching all game assets v9 with 6 Mini-Games');
+      console.log('[Service Worker] Caching all game assets v12 with 10 Levels & 10 Mini-Games');
       return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
         console.warn('[Service Worker] Partial cache error:', err);
       });
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -51,7 +64,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[Service Worker] Removing old cache:', key);
+            console.log('[Service Worker] Purging old cache:', key);
             return caches.delete(key);
           }
         })
@@ -60,19 +73,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Network-First Strategy (Always fetch latest, fallback to cache offline)
+// Network-First for dynamic / script resources, fallback to cache when offline
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
-          const responseClone = networkResponse.clone();
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+            cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
