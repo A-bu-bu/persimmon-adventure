@@ -1,4 +1,4 @@
-// Handcrafted Level Data for Levels 1, 2, and 3
+// Handcrafted Level Data for Levels 1 to 6 with unique Hero Sprites per level
 
 function createGrid(w, h, fill = 0) {
   return new Array(w * h).fill(fill);
@@ -31,9 +31,9 @@ setBlock(l1Tiles, l1W, 27, 16, 20, 2, 2);
 setBlock(l1Tiles, l1W, 50, 15, 30, 3, 1);
 setBlock(l1Tiles, l1W, 50, 16, 30, 2, 2);
 
-// Elevated Platforms & Steps (平緩舒適的連貫階梯)
+// Elevated Platforms & Steps
 setBlock(l1Tiles, l1W, 10, 12, 6, 1, 1);
-setBlock(l1Tiles, l1W, 15, 11, 8, 1, 3); // One-way wooden branch (平緩台階，僅 1 格高度差)
+setBlock(l1Tiles, l1W, 15, 11, 8, 1, 3);
 setBlock(l1Tiles, l1W, 27, 12, 6, 1, 1);
 setBlock(l1Tiles, l1W, 34, 10, 8, 1, 3);
 setBlock(l1Tiles, l1W, 43, 11, 5, 1, 1);
@@ -47,6 +47,7 @@ setBlock(l1Tiles, l1W, 79, 0, 1, 18, 5);
 export const Level1 = {
   name: '第一關：豐收果園',
   theme: 'orchard',
+  heroSprite: './assets/hero_transparent.png',
   width: l1W,
   height: l1H,
   tiles: l1Tiles,
@@ -83,7 +84,7 @@ export const Level1 = {
   ]
 };
 
-// --- LEVEL 2: 荊棘迷宮 (Bramble Maze) ---
+// --- LEVEL 2: 好運旺旺來・神采踩腳丫 (Bramble Maze) ---
 const l2W = 90;
 const l2H = 20;
 const l2Tiles = createGrid(l2W, l2H, 0);
@@ -93,19 +94,30 @@ setBlock(l2Tiles, l2W, 0, 17, 20, 3, 1);
 setBlock(l2Tiles, l2W, 0, 18, 20, 2, 2);
 
 // Thorn Pit (Spikes)
-setBlock(l2Tiles, l2W, 20, 19, 12, 1, 4); // Spikes
+setBlock(l2Tiles, l2W, 20, 19, 12, 1, 4);
 setBlock(l2Tiles, l2W, 32, 17, 20, 3, 1);
 setBlock(l2Tiles, l2W, 32, 18, 20, 2, 2);
 
 // Thorn Pit 2
-setBlock(l2Tiles, l2W, 52, 19, 14, 1, 4); // Spikes
+setBlock(l2Tiles, l2W, 52, 19, 14, 1, 4);
 setBlock(l2Tiles, l2W, 66, 17, 24, 3, 1);
 setBlock(l2Tiles, l2W, 66, 18, 24, 2, 2);
 
-// High Wall Climbing & Puzzle Sections
-setBlock(l2Tiles, l2W, 14, 8, 2, 9, 5); // Wall for wall jumping
-setBlock(l2Tiles, l2W, 18, 5, 8, 1, 3);
-setBlock(l2Tiles, l2W, 28, 7, 2, 10, 5);
+// Gentle Stepping Platforms & Passable Wall Sections
+// Step 1: Platforms leading over first wall
+setBlock(l2Tiles, l2W, 6, 14, 4, 1, 3);   // Step 1
+setBlock(l2Tiles, l2W, 10, 12, 4, 1, 3);  // Step 2
+setBlock(l2Tiles, l2W, 14, 11, 2, 6, 5);  // Wall (lowered to y=11)
+setBlock(l2Tiles, l2W, 14, 11, 8, 1, 3);  // Wall top platform
+setBlock(l2Tiles, l2W, 18, 8, 8, 1, 3);   // High platform
+
+// Step 2: Platforms leading over second wall
+setBlock(l2Tiles, l2W, 22, 14, 4, 1, 3);  // Step 1
+setBlock(l2Tiles, l2W, 25, 12, 4, 1, 3);  // Step 2
+setBlock(l2Tiles, l2W, 28, 11, 2, 6, 5);  // Wall (lowered to y=11)
+setBlock(l2Tiles, l2W, 28, 11, 8, 1, 3);  // Wall top platform
+
+// Step 3: Upper fun platforms
 setBlock(l2Tiles, l2W, 38, 13, 6, 1, 1);
 setBlock(l2Tiles, l2W, 46, 10, 6, 1, 3);
 setBlock(l2Tiles, l2W, 54, 8, 4, 1, 1);
@@ -127,9 +139,11 @@ export const Level2 = {
   playerStart: { x: 80, y: 460 },
   portal: { x: 84 * 32, y: 15 * 32 },
   collectibles: [
-    { x: 16 * 32, y: 4 * 32, type: 'ingot' },
+    { x: 8 * 32, y: 12 * 32, type: 'persimmon' },
+    { x: 16 * 32, y: 6 * 32, type: 'ingot' },
     { x: 22 * 32, y: 13 * 32, type: 'persimmon' },
     { x: 25 * 32, y: 13 * 32, type: 'persimmon' },
+    { x: 30 * 32, y: 9 * 32, type: 'ingot' },
     { x: 35 * 32, y: 15 * 32, type: 'heart' },
     { x: 48 * 32, y: 8 * 32, type: 'persimmon' },
     { x: 56 * 32, y: 6 * 32, type: 'ingot' },
@@ -138,9 +152,10 @@ export const Level2 = {
   ],
   springs: [],
   pawPads: [
-    { x: 10 * 32, y: 16 * 32 + 4, power: -720 },
-    { x: 34 * 32, y: 16 * 32 + 4, power: -740 },
-    { x: 64 * 32, y: 16 * 32 + 4, power: -750 }
+    { x: 8 * 32, y: 16 * 32 + 8, power: -720 },  // First wall super bounce
+    { x: 22 * 32, y: 16 * 32 + 8, power: -720 }, // Second wall super bounce
+    { x: 40 * 32, y: 12 * 32 + 8, power: -680 },
+    { x: 54 * 32, y: 16 * 32 + 8, power: -720 }
   ],
   movingPlatforms: [
     { x: 21 * 32, y: 14 * 32, width: 64, height: 14, moveX: 0, moveY: -140, speed: 60 },
@@ -182,6 +197,7 @@ setBlock(l3Tiles, l3W, 53, 0, 2, 18, 5);
 export const Level3 = {
   name: '第三關：決戰！貪吃蟲魔王',
   theme: 'boss',
+  heroSprite: './assets/hero_level3.png',
   width: l3W,
   height: l3H,
   tiles: l3Tiles,
@@ -213,7 +229,7 @@ const l4Tiles = createGrid(l4W, l4H, 0);
 setBlock(l4Tiles, l4W, 0, 17, 18, 3, 1);
 setBlock(l4Tiles, l4W, 0, 18, 18, 2, 2);
 
-// Lava Pit 1 (Spikes)
+// Lava Pit 1
 setBlock(l4Tiles, l4W, 18, 19, 14, 1, 4);
 setBlock(l4Tiles, l4W, 32, 17, 16, 3, 1);
 setBlock(l4Tiles, l4W, 32, 18, 16, 2, 2);
@@ -226,7 +242,7 @@ setBlock(l4Tiles, l4W, 64, 18, 30, 2, 2);
 // Elevated Volcanic Platforms & Steep Stairs
 setBlock(l4Tiles, l4W, 12, 13, 5, 1, 1);
 setBlock(l4Tiles, l4W, 20, 10, 8, 1, 3);
-setBlock(l4Tiles, l4W, 29, 7, 2, 11, 5); // Wall jump tower
+setBlock(l4Tiles, l4W, 29, 7, 2, 11, 5);
 setBlock(l4Tiles, l4W, 36, 12, 6, 1, 3);
 setBlock(l4Tiles, l4W, 44, 9, 6, 1, 1);
 setBlock(l4Tiles, l4W, 52, 13, 4, 1, 3);
@@ -241,6 +257,7 @@ setBlock(l4Tiles, l4W, 94, 0, 1, 20, 5);
 export const Level4 = {
   name: '第四關：熔岩果嶺',
   theme: 'volcano',
+  heroSprite: './assets/hero_level4.png',
   width: l4W,
   height: l4H,
   tiles: l4Tiles,
@@ -287,7 +304,7 @@ const l5Tiles = createGrid(l5W, l5H, 0);
 setBlock(l5Tiles, l5W, 0, 19, 16, 3, 1);
 setBlock(l5Tiles, l5W, 0, 20, 16, 2, 2);
 
-// Cloud Pit 1 (Endless Sky Hazard Spikes)
+// Cloud Pit 1
 setBlock(l5Tiles, l5W, 16, 21, 16, 1, 4);
 setBlock(l5Tiles, l5W, 32, 18, 14, 4, 1);
 setBlock(l5Tiles, l5W, 32, 19, 14, 3, 2);
@@ -319,6 +336,7 @@ setBlock(l5Tiles, l5W, 99, 0, 1, 22, 5);
 export const Level5 = {
   name: '第五關：雲霄仙境',
   theme: 'sky',
+  heroSprite: './assets/hero_level5.png',
   width: l5W,
   height: l5H,
   tiles: l5Tiles,
@@ -346,7 +364,7 @@ export const Level5 = {
   ],
   crumblingPlatforms: [
     { x: 22 * 32, y: 13 * 32, width: 64, height: 14 },
-    { x: 62 * 32, y: 10 * 32, width: 64, height: 14 }
+    { x: 62 * 10 * 32, y: 10 * 32, width: 64, height: 14 }
   ],
   enemies: [
     { x: 8 * 32, y: 18 * 32, type: 'crawler' },
@@ -359,7 +377,7 @@ export const Level5 = {
   ]
 };
 
-// --- LEVEL 6: 終極神木王座・真魔王皇帝 (The Ancient Divine Tree & True Chaos Emperor Boss) ---
+// --- LEVEL 6: 終極神木王座・真魔王皇帝 ---
 const l6W = 60;
 const l6H = 18;
 const l6Tiles = createGrid(l6W, l6H, 0);
@@ -373,7 +391,7 @@ setBlock(l6Tiles, l6W, 8, 11, 8, 1, 3);
 setBlock(l6Tiles, l6W, 44, 11, 8, 1, 3);
 setBlock(l6Tiles, l6W, 20, 8, 8, 1, 3);
 setBlock(l6Tiles, l6W, 32, 8, 8, 1, 3);
-setBlock(l6Tiles, l6W, 24, 5, 12, 1, 3); // High throne platform
+setBlock(l6Tiles, l6W, 24, 5, 12, 1, 3);
 
 // Boundaries
 setBlock(l6Tiles, l6W, 0, 0, 2, 18, 5);
@@ -382,6 +400,7 @@ setBlock(l6Tiles, l6W, 58, 0, 2, 18, 5);
 export const Level6 = {
   name: '第六關：終極神木王座・真魔王皇帝',
   theme: 'final_boss',
+  heroSprite: './assets/hero_level6.png',
   width: l6W,
   height: l6H,
   tiles: l6Tiles,

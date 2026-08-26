@@ -1,10 +1,10 @@
-const CACHE_NAME = 'persimmon-adventure-v6';
+const CACHE_NAME = 'persimmon-adventure-v9';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './css/style.css?v=6',
-  './js/main.js?v=6',
+  './css/style.css?v=9',
+  './js/main.js?v=9',
   './js/pwa.js',
   './js/engine/audio.js',
   './js/engine/input.js',
@@ -21,6 +21,10 @@ const ASSETS_TO_CACHE = [
   './js/world/objects.js',
   './js/minigames/pawStompGame.js',
   './js/minigames/catchCoinsGame.js',
+  './js/minigames/whackMoleGame.js',
+  './js/minigames/shootingGalleryGame.js',
+  './js/minigames/cloudGliderGame.js',
+  './js/minigames/bossParryGame.js',
   './js/ui/hud.js',
   './assets/hero_transparent.png',
   './assets/hero_level2.png',
@@ -33,7 +37,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching all game assets v6');
+      console.log('[Service Worker] Caching all game assets v9 with 6 Mini-Games');
       return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
         console.warn('[Service Worker] Partial cache error:', err);
       });

@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="柿柿順利">
   <meta name="theme-color" content="#ff7700">
-  <meta name="description" content="超萌背柿小勇士的 2D 動作平台跳躍冒險遊戲！收集甜柿、釋放果籽彈、挑戰魔王！">
+  <meta name="description" content="超萌背柿小勇士的 2D 動作平台跳躍冒險遊戲！收集甜柿、釋放果籽彈、挑戰魔王、解鎖 6 大特色迷你遊戲！">
   <title>柿柿順利大冒險 - 2D 動作平台跳躍遊戲</title>
   
   <!-- PWA Manifest & Icons -->
@@ -16,14 +17,15 @@
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./css/style.css?v=7">
+  <link rel="stylesheet" href="./css/style.css?v=9">
 </head>
 <body>
   <div id="app">
     <!-- Top Utility Toolbar -->
     <div id="top-bar">
       <button id="btn-pwa-install" class="tool-btn" style="display: none;">📲 安裝遊戲 App</button>
-      <button id="btn-open-minigames-top" class="tool-btn" style="border-color: #ffd700; color: #ffeb3b;">🎮 迷你遊戲</button>
+      <button id="btn-open-profile-top" class="tool-btn" style="border-color: #ffd700; color: #ffd700;">👤 <span id="top-username">背柿小勇士</span> 戰績</button>
+      <button id="btn-open-minigames-top" class="tool-btn" style="border-color: #ffd700; color: #ffeb3b;">🎮 6大迷你遊戲</button>
       <button id="btn-toggle-touch" class="tool-btn">🎮 觸控搖桿: 關</button>
       <button id="btn-toggle-sound" class="tool-btn">🔊 音效: 開</button>
       <button id="btn-how-to-play" class="tool-btn">❓ 玩法說明</button>
@@ -53,14 +55,28 @@
       </div>
     </div>
 
-    <!-- START MENU MODAL (含遊戲說明、接關與迷你遊戲) -->
+    <!-- START MENU MODAL (含遊戲說明、帳號資訊、接關與迷你遊戲) -->
     <div id="modal-start" class="overlay-modal" style="display: flex;">
       <div class="modal-content start-modal-content">
+        <!-- 帳號狀態列 -->
+        <div class="account-status-bar">
+          <div class="account-info-left">
+            <span>👤 勇士:</span>
+            <span id="current-user-display" class="account-name-badge">背柿小勇士</span>
+            <span>🪙 資產:</span>
+            <span id="current-user-coins" class="account-coins-badge">$0</span>
+          </div>
+          <div class="account-actions">
+            <button id="btn-view-profile" class="btn-pill" style="border-color: #ffd700; color: #ffd700;">📊 戰績榜</button>
+            <button id="btn-switch-user" class="btn-pill">🔄 切換帳號</button>
+          </div>
+        </div>
+
         <div class="start-header">
           <img src="./assets/hero_transparent.png" alt="背柿小勇士" class="hero-banner">
           <div>
             <h1 class="game-title">柿柿順利大冒險</h1>
-            <p class="game-subtitle">元氣背柿小勇士出發！第2關好運踩腳丫、擊敗害蟲魔王保衛果園！</p>
+            <p class="game-subtitle">元氣背柿小勇士出發！通關解鎖 6 款不重複特色 Mini-Games！</p>
           </div>
         </div>
 
@@ -101,8 +117,89 @@
           <button id="btn-start-game" class="primary-btn">🍊 新的冒險 (從第 1 關開始)</button>
           <div style="display: flex; gap: 10px; width: 100%;">
             <button id="btn-open-level-select" class="secondary-btn" style="flex: 1;">🚩 關卡選擇與隱藏遊戲</button>
-            <button id="btn-open-minigames" class="secondary-btn" style="flex: 1; border-color: #ffd700; color: #ffeb3b;">🎮 迷你遊戲專區</button>
+            <button id="btn-open-minigames" class="secondary-btn" style="flex: 1; border-color: #ffd700; color: #ffeb3b;">🎮 6大迷你遊戲專區</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN / SWITCH USER MODAL -->
+    <div id="modal-login" class="overlay-modal" style="display: none;">
+      <div class="modal-content" style="max-width: 480px;">
+        <h1 class="game-title" style="font-size: 24px;">👤 勇士帳號登入</h1>
+        <p class="game-subtitle">免輸入密碼！輸入您的暱稱或帳號即可開始記錄戰績與進度：</p>
+        
+        <input type="text" id="input-username" class="login-input" placeholder="請輸入勇士暱稱 / 帳號名稱" maxlength="16">
+        
+        <button id="btn-submit-login" class="primary-btn" style="width: 100%;">🍊 進入遊戲 (登入 / 建立帳號)</button>
+
+        <div style="margin-top: 18px; text-align: left;">
+          <div style="font-size: 12px; color: #aaa; margin-bottom: 6px;">💡 或直接點選曾在此裝置玩過的帳號：</div>
+          <div id="user-history-list" class="user-history-list"></div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 12px;">
+          <button id="btn-close-login" class="secondary-btn">返回主選單</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE & STATS MODAL (個人戰績詳細排行榜) -->
+    <div id="modal-profile" class="overlay-modal" style="display: none;">
+      <div class="modal-content" style="max-width: 640px; max-height: 90vh; overflow-y: auto;">
+        <h1 class="game-title" style="font-size: 24px; color: #ffd700;">📊 個人冒險戰績榮譽榜</h1>
+        
+        <div class="profile-stats-grid">
+          <div class="profile-stat-box">
+            <div class="stat-label">👤 勇士名稱</div>
+            <div id="profile-stat-name" class="stat-value">背柿小勇士</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="stat-label">🪙 累積總資產 (甜柿金幣)</div>
+            <div id="profile-stat-coins" class="stat-value" style="color: #a3ff44;">$0</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="stat-label">🚩 最高抵達關卡</div>
+            <div id="profile-stat-level" class="stat-value">第 1 關</div>
+          </div>
+          <div class="profile-stat-box">
+            <div class="stat-label">🏆 主線總得分累計</div>
+            <div id="profile-stat-totalscore" class="stat-value">0 分</div>
+          </div>
+        </div>
+
+        <!-- 各主線關卡歷史最高分 -->
+        <h3 style="color: #ffaa00; font-size: 15px; margin: 16px 0 6px; text-align: left;">🗺️ 主線各關卡歷史最高得分紀錄</h3>
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>關卡名稱</th>
+              <th>通關狀態</th>
+              <th>歷史最高分</th>
+            </tr>
+          </thead>
+          <tbody id="profile-level-scores-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- 6 款迷你遊戲最高分 -->
+        <h3 style="color: #ffd700; font-size: 15px; margin: 14px 0 6px; text-align: left;">🎮 6 大特色迷你遊戲歷史最佳成績</h3>
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th>迷你遊戲</th>
+              <th>解鎖條件</th>
+              <th>歷史最高分</th>
+            </tr>
+          </thead>
+          <tbody id="profile-minigame-scores-body">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+
+        <div class="btn-group" style="margin-top: 16px;">
+          <button id="btn-close-profile" class="secondary-btn">關閉戰績榜</button>
         </div>
       </div>
     </div>
@@ -111,14 +208,14 @@
     <div id="modal-level-select" class="overlay-modal" style="display: none;">
       <div class="modal-content" style="max-width: 660px; max-height: 90vh; overflow-y: auto;">
         <h1 class="game-title" style="font-size: 26px;">🚩 關卡選擇與過關解鎖</h1>
-        <p class="game-subtitle">選擇冒險關卡挑戰，通關後可解鎖隱藏特色 Mini-Games！</p>
+        <p class="game-subtitle">選擇冒險關卡挑戰，通關後可解鎖 6 款特色 Mini-Games！</p>
         
         <!-- 主線 1~6 關 -->
         <h3 style="color: #ffaa00; font-size: 15px; margin: 12px 0 8px; text-align: left;">🗺️ 主線冒險關卡</h3>
         <div id="level-select-grid" class="level-grid"></div>
 
         <!-- 過關解鎖的隱藏迷你遊戲 -->
-        <h3 style="color: #ffd700; font-size: 15px; margin: 18px 0 8px; text-align: left;">🏆 過關解鎖・隱藏特色迷你遊戲 (Mini-Games)</h3>
+        <h3 style="color: #ffd700; font-size: 15px; margin: 18px 0 8px; text-align: left;">🏆 過關解鎖・6 大特色迷你遊戲 (Mini-Games)</h3>
         <div id="level-select-minigames" class="minigames-grid"></div>
 
         <div class="btn-group" style="margin-top: 18px;">
@@ -127,33 +224,13 @@
       </div>
     </div>
 
-    <!-- MINI-GAMES MODAL -->
+    <!-- MINI-GAMES MODAL (6 款全迷你遊戲列表) -->
     <div id="modal-minigames" class="overlay-modal" style="display: none;">
-      <div class="modal-content" style="max-width: 640px;">
-        <h1 class="game-title" style="font-size: 26px; color: #ffd700;">🎮 隱藏迷你遊戲專區</h1>
-        <p class="game-subtitle">通關冒險解鎖各種不同類型的特色趣味小遊戲！</p>
+      <div class="modal-content" style="max-width: 660px; max-height: 90vh; overflow-y: auto;">
+        <h1 class="game-title" style="font-size: 26px; color: #ffd700;">🎮 6 大特色迷你遊戲專區</h1>
+        <p class="game-subtitle">每通過一個主線關卡，就能解鎖一款全新玩法的特色小遊戲！</p>
         
-        <div class="minigames-grid">
-          <div id="card-minigame-paw" class="minigame-card">
-            <div class="minigame-icon">🐾</div>
-            <div class="minigame-info">
-              <h3>神速踩腳丫大對決</h3>
-              <p>好運旺旺來！隨機踩踏招財金腳丫與調皮獸足，考驗極速反應力！</p>
-              <div class="minigame-meta">最高紀錄: <span id="score-pawStomp">0</span> 分</div>
-            </div>
-            <button class="primary-btn btn-play-minigame" data-game="pawStomp" style="padding: 10px 18px; font-size: 14px; flex-shrink: 0;">挑戰 ➔</button>
-          </div>
-
-          <div id="card-minigame-coins" class="minigame-card">
-            <div class="minigame-icon">💰</div>
-            <div class="minigame-info">
-              <h3>天降財神接金鈔</h3>
-              <p>天降硬幣、百元鈔、千元大鈔與萬兩元寶！左右跑動撿錢、閃避炸彈！</p>
-              <div class="minigame-meta">最高紀錄: <span id="score-catchCoins">0</span> 分</div>
-            </div>
-            <button class="primary-btn btn-play-minigame" data-game="catchCoins" style="padding: 10px 18px; font-size: 14px; flex-shrink: 0;">挑戰 ➔</button>
-          </div>
-        </div>
+        <div id="minigames-modal-list" class="minigames-grid"></div>
 
         <div class="btn-group" style="margin-top: 20px;">
           <button id="btn-close-minigames" class="secondary-btn">返回主選單</button>
@@ -266,7 +343,7 @@
       <div class="modal-content">
         <img src="./assets/hero_transparent.png" alt="柿柿順利" class="hero-banner">
         <h1 class="game-title" style="color: #ffe066;">🏆 大吉大利！柿柿順利！</h1>
-        <p class="game-subtitle">你成功擊敗了貪吃蟲魔王與終極魔王！保衛了果園的豐收！</p>
+        <p class="game-subtitle">你成功擊敗了貪吃蟲魔王與終極魔王！保衛了果園的豐收！解鎖真魔王彈刀挑戰！</p>
         <div class="stats-panel">
           <p id="final-score-val">最終總分: 0</p>
           <p id="final-coins-val">總收集甜柿: 0</p>
@@ -280,6 +357,6 @@
   </div>
 
   <!-- Game Scripts -->
-  <script type="module" src="./js/main.js?v=7"></script>
+  <script type="module" src="./js/main.js?v=9"></script>
 </body>
 </html>
