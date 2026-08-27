@@ -1,5 +1,5 @@
 // Save Manager: Multi-Account Management & Cloud Sync via Firebase Firestore
-// Same username syncs across all devices (desktop + mobile)
+// Same username syncs across all devices (desktop + mobile) + World Leaderboard
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyC3p5wUP1-qKChfEmwUgDS-oGNRH9M-4yA",
@@ -75,7 +75,7 @@ export class SaveManager {
       this.saveAllProfiles(false);
     }
 
-    // Auto sync on startup: push any local profiles with progress, and pull active user
+    // Auto sync on startup
     setTimeout(async () => {
       await this.syncAllLocalProfilesToCloud();
       await this.pullFromCloud(this.currentUsername);
@@ -266,6 +266,88 @@ export class SaveManager {
     } catch (e) {
       console.warn('[Cloud] ⚠️ Pull failed:', e);
     }
+  }
+
+  /** Fetch World Leaderboard from Cloud Firestore */
+  async fetchWorldLeaderboard() {
+    // First gather local accounts
+    const localMap = {};
+    Object.keys(this.profiles).forEach((uname) => {
+      const p = this.profiles[uname];
+      let totalScore = 0;
+      if (p.levelScores) {
+        Object.values(p.levelScores).forEach(sc => totalScore += (Number(sc) || 0));
+      }
+      let miniGameTotal = 0;
+      if (p.miniGameScores) {
+        Object.values(p.miniGameScores).forEach(sc => miniGameTotal += (Number(sc) || 0));
+      }
+      localMap[uname] = {
+        username: uname,
+        highestLevel: p.highestLevel || 1,
+        totalCoins: p.totalCoins || 0,
+        totalScore: totalScore,
+        miniGameTotal: miniGameTotal,
+        gameCompleted: Boolean(p.gameCompleted),
+        lastPlayed: p.lastPlayed || p.createdAt || Date.now()
+      };
+    });
+
+    try {
+      const db = await getFirestore();
+      if (db) {
+        const snapshot = await db.collection('profiles').get();
+        snapshot.forEach((doc) => {
+          const d = doc.data();
+          const uname = d.username || doc.id;
+          let totalScore = 0;
+          if (d.levelScores) {
+            Object.values(d.levelScores).forEach(sc => totalScore += (Number(sc) || 0));
+          }
+          let miniGameTotal = 0;
+          if (d.miniGameScores) {
+            Object.values(d.miniGameScores).forEach(sc => miniGameTotal += (Number(sc) || 0));
+          }
+
+          const existing = localMap[uname];
+          if (!existing) {
+            localMap[uname] = {
+              username: uname,
+              highestLevel: d.highestLevel || 1,
+              totalCoins: d.totalCoins || 0,
+              totalScore: totalScore,
+              miniGameTotal: miniGameTotal,
+              gameCompleted: Boolean(d.gameCompleted),
+              lastPlayed: d.lastPlayed || d._lastSyncedAt || 0
+            };
+          } else {
+            existing.highestLevel = Math.max(existing.highestLevel, d.highestLevel || 1);
+            existing.totalCoins = Math.max(existing.totalCoins, d.totalCoins || 0);
+            existing.totalScore = Math.max(existing.totalScore, totalScore);
+            existing.miniGameTotal = Math.max(existing.miniGameTotal, miniGameTotal);
+            existing.gameCompleted = existing.gameCompleted || Boolean(d.gameCompleted);
+            existing.lastPlayed = Math.max(existing.lastPlayed, d.lastPlayed || 0);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('[Leaderboard] Cloud fetch failed, using local saves:', e);
+    }
+
+    const list = Object.values(localMap);
+
+    // Ranking algorithm:
+    // 1. highestLevel (descending)
+    // 2. totalScore (descending)
+    // 3. totalCoins (descending)
+    list.sort((a, b) => {
+      if (b.highestLevel !== a.highestLevel) return b.highestLevel - a.highestLevel;
+      if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+      if (b.totalCoins !== a.totalCoins) return b.totalCoins - a.totalCoins;
+      return b.lastPlayed - a.lastPlayed;
+    });
+
+    return list;
   }
 
   get data() {

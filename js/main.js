@@ -1,4 +1,4 @@
-// Main Game Lifecycle, Loop & State Machine with 10 Mini-Games
+﻿// Main Game Lifecycle, Loop & State Machine with 10 Mini-Games
 import { input } from './engine/input.js';
 import { audio } from './engine/audio.js';
 import { Camera } from './engine/camera.js';
@@ -217,6 +217,33 @@ class Game {
       this.openProfileModal();
     });
 
+        // Tab switching in Profile Modal
+    document.getElementById('tab-profile-personal')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('tab-profile-personal')?.classList.add('active');
+      document.getElementById('tab-profile-world')?.classList.remove('active');
+      const pTab = document.getElementById('tab-content-personal');
+      const wTab = document.getElementById('tab-content-world');
+      if (pTab) pTab.style.display = 'block';
+      if (wTab) wTab.style.display = 'none';
+      this.renderProfileStats();
+    });
+
+    document.getElementById('tab-profile-world')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('tab-profile-world')?.classList.add('active');
+      document.getElementById('tab-profile-personal')?.classList.remove('active');
+      const pTab = document.getElementById('tab-content-personal');
+      const wTab = document.getElementById('tab-content-world');
+      if (pTab) pTab.style.display = 'none';
+      if (wTab) wTab.style.display = 'block';
+      this.renderWorldLeaderboard();
+    });
+
+    document.getElementById('btn-refresh-world-leaderboard')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.renderWorldLeaderboard();
+    });
     document.getElementById('btn-close-profile')?.addEventListener('click', (e) => {
       e.preventDefault();
       document.getElementById('modal-profile').style.display = 'none';

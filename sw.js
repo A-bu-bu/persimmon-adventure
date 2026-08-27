@@ -1,10 +1,10 @@
-﻿const CACHE_NAME = 'persimmon-adventure-v20';
+﻿const CACHE_NAME = 'persimmon-adventure-v21';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './css/style.css?v=20',
-  './js/main.js?v=20',
+  './css/style.css?v=21',
+  './js/main.js?v=21',
   './js/pwa.js',
   './js/engine/audio.js',
   './js/engine/input.js',
