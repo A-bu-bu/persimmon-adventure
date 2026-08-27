@@ -65,12 +65,21 @@ class Game {
     this.crumblingPlatforms = [];
     this.portal = null;
     this.boss = null;
+    window._gameEngine = this;
 
     this.lastTime = performance.now();
     this.setupWindowResize();
     this.bindUIEvents();
     this.bindCanvasInput();
     initPWA();
+    // Cloud Sync Event Listener
+    document.addEventListener('cloudSyncDone', (e) => {
+      console.log('[Game] Cloud sync event received, refreshing UI:', e.detail);
+      this.updateStartMenuState();
+      if (this.hud) {
+        this.hud.update();
+      }
+    });
 
     this.updateStartMenuState();
 
@@ -361,9 +370,11 @@ class Game {
         </div>
       `;
 
-      item.querySelector('.btn-switch-user')?.addEventListener('click', (e) => {
+      item.querySelector('.btn-switch-user')?.addEventListener('click', async (e) => {
         e.preventDefault();
-        saveManager.login(u.username);
+        const btn = e.currentTarget;
+        btn.textContent = '同步中...';
+        await saveManager.login(u.username);
         this.updateStartMenuState();
         this.renderAccountList();
         document.getElementById('modal-login').style.display = 'none';
@@ -382,14 +393,17 @@ class Game {
     });
   }
 
-  handleLoginSubmit() {
+  async handleLoginSubmit() {
     const inputEl = document.getElementById('login-username-input');
     const name = (inputEl?.value || '').trim();
     if (!name) {
       alert('請輸入您的帳號名稱！');
       return;
     }
-    saveManager.login(name);
+    const btn = document.getElementById('btn-do-login');
+    if (btn) btn.textContent = '☁️ 雲端連線同步中...';
+    await saveManager.login(name);
+    if (btn) btn.textContent = '登入 / 建立';
     this.updateStartMenuState();
     document.getElementById('modal-login').style.display = 'none';
   }
@@ -805,6 +819,7 @@ class Game {
       audio.playBGM('boss');
     } else {
       this.boss = null;
+    window._gameEngine = this;
       audio.playBGM(this.currentLevel.theme);
     }
   }
