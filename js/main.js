@@ -1,4 +1,4 @@
-﻿// Main Game Lifecycle, Loop & State Machine with 10 Mini-Games
+// Main Game Lifecycle, Loop & State Machine with 10 Mini-Games
 import { input } from './engine/input.js';
 import { audio } from './engine/audio.js';
 import { Camera } from './engine/camera.js';
@@ -705,6 +705,59 @@ class Game {
         mgTableBody.appendChild(row);
       });
     }
+  }
+
+  async renderWorldLeaderboard() {
+    const loadingEl = document.getElementById('world-leaderboard-loading');
+    const tbody = document.getElementById('world-leaderboard-body');
+    const subtitleEl = document.getElementById('world-leaderboard-subtitle');
+    if (loadingEl) loadingEl.style.display = 'block';
+    if (tbody) tbody.innerHTML = '';
+
+    const list = await saveManager.fetchWorldLeaderboard();
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (subtitleEl) {
+      subtitleEl.innerHTML = `🌍 全球共有 <b style="color: #ffd700;">${list.length}</b> 位冒險家登錄戰績（即時連線 Firebase 雲端資料庫）`;
+    }
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="padding: 24px; color: #888;">尚未有玩家登錄，快來挑戰成為第一名！</td></tr>';
+      return;
+    }
+
+    list.forEach((player, idx) => {
+      const isCurrent = player.username === saveManager.currentUsername;
+      const rankNum = idx + 1;
+      let rankBadge = '';
+      if (rankNum === 1) {
+        rankBadge = '<span class="rank-badge rank-badge-1">🥇 1</span>';
+      } else if (rankNum === 2) {
+        rankBadge = '<span class="rank-badge rank-badge-2">🥈 2</span>';
+      } else if (rankNum === 3) {
+        rankBadge = '<span class="rank-badge rank-badge-3">🥉 3</span>';
+      } else {
+        rankBadge = `<span class="rank-badge rank-badge-other">${rankNum}</span>`;
+      }
+
+      const isCompleted = player.gameCompleted || player.highestLevel >= 10;
+      const nameDisplay = `${isCompleted ? '👑 ' : ''}${player.username}${isCurrent ? ' <span style="color: #ffd700; font-size: 11px;">(你)</span>' : ''}`;
+
+      const row = document.createElement('tr');
+      if (isCurrent) row.className = 'my-rank-row';
+      row.innerHTML = `
+        <td>${rankBadge}</td>
+        <td style="text-align: left; font-weight: bold;">${nameDisplay}</td>
+        <td><span style="color: ${player.highestLevel >= 10 ? '#ffd700' : '#81c784'}; font-weight: bold;">第 ${player.highestLevel} 關</span></td>
+        <td><span class="score-val-badge">${(player.totalScore || 0).toLocaleString()}</span> 分</td>
+        <td><span style="color: #a3ff44; font-weight: bold;">$${(player.totalCoins || 0).toLocaleString()}</span></td>
+        <td><span style="color: #ffeb3b;">${(player.miniGameTotal || 0).toLocaleString()}</span> 分</td>
+      `;
+      tbody.appendChild(row);
+    });
   }
 
   startMiniGame(gameId) {

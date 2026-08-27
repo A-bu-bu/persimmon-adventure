@@ -52,6 +52,64 @@ function loadScript(src) {
   });
 }
 
+// Default World Benchmark Legends (世界名人堂傳奇紀錄)
+const WORLD_LEGENDS = [
+  {
+    username: '柿界戰神・阿布',
+    highestLevel: 10,
+    totalCoins: 1580,
+    totalScore: 23800,
+    miniGameTotal: 8900,
+    gameCompleted: true,
+    lastPlayed: 1720000000000
+  },
+  {
+    username: '神速踩怪大師',
+    highestLevel: 10,
+    totalCoins: 1240,
+    totalScore: 19650,
+    miniGameTotal: 7500,
+    gameCompleted: true,
+    lastPlayed: 1720000000000
+  },
+  {
+    username: '彩虹滑翔柿',
+    highestLevel: 9,
+    totalCoins: 960,
+    totalScore: 16800,
+    miniGameTotal: 6200,
+    gameCompleted: false,
+    lastPlayed: 1720000000000
+  },
+  {
+    username: '彈刀劍聖・小元氣',
+    highestLevel: 8,
+    totalCoins: 820,
+    totalScore: 13500,
+    miniGameTotal: 5100,
+    gameCompleted: false,
+    lastPlayed: 1720000000000
+  },
+  {
+    username: '果園巡守隊長',
+    highestLevel: 6,
+    totalCoins: 550,
+    totalScore: 9400,
+    miniGameTotal: 3800,
+    gameCompleted: false,
+    lastPlayed: 1720000000000
+  },
+  {
+    username: '金幣收藏家',
+    highestLevel: 5,
+    totalCoins: 480,
+    totalScore: 7200,
+    miniGameTotal: 2900,
+    gameCompleted: false,
+    lastPlayed: 1720000000000
+  }
+];
+
 export class SaveManager {
   constructor() {
     this.storageKeyProfiles = 'persimmon_adventure_profiles_v3';
@@ -187,7 +245,6 @@ export class SaveManager {
     }
   }
 
-  /** Push specific profile to Firestore */
   async pushToCloud(username) {
     if (!username) return;
     const profile = this.profiles[username];
@@ -208,7 +265,6 @@ export class SaveManager {
     }
   }
 
-  /** Pull cloud profile for username and merge */
   async pullFromCloud(username) {
     if (!username) return;
 
@@ -268,10 +324,16 @@ export class SaveManager {
     }
   }
 
-  /** Fetch World Leaderboard from Cloud Firestore */
+  /** Fetch World Leaderboard: merges benchmarks + all cloud profiles + all local profiles */
   async fetchWorldLeaderboard() {
-    // First gather local accounts
-    const localMap = {};
+    const playerMap = {};
+
+    // 1. Seed with World Legends
+    WORLD_LEGENDS.forEach((legend) => {
+      playerMap[legend.username] = { ...legend };
+    });
+
+    // 2. Add all local profiles
     Object.keys(this.profiles).forEach((uname) => {
       const p = this.profiles[uname];
       let totalScore = 0;
@@ -282,7 +344,7 @@ export class SaveManager {
       if (p.miniGameScores) {
         Object.values(p.miniGameScores).forEach(sc => miniGameTotal += (Number(sc) || 0));
       }
-      localMap[uname] = {
+      playerMap[uname] = {
         username: uname,
         highestLevel: p.highestLevel || 1,
         totalCoins: p.totalCoins || 0,
@@ -293,6 +355,7 @@ export class SaveManager {
       };
     });
 
+    // 3. Fetch from Firebase Cloud Firestore
     try {
       const db = await getFirestore();
       if (db) {
@@ -309,9 +372,9 @@ export class SaveManager {
             Object.values(d.miniGameScores).forEach(sc => miniGameTotal += (Number(sc) || 0));
           }
 
-          const existing = localMap[uname];
+          const existing = playerMap[uname];
           if (!existing) {
-            localMap[uname] = {
+            playerMap[uname] = {
               username: uname,
               highestLevel: d.highestLevel || 1,
               totalCoins: d.totalCoins || 0,
@@ -331,10 +394,10 @@ export class SaveManager {
         });
       }
     } catch (e) {
-      console.warn('[Leaderboard] Cloud fetch failed, using local saves:', e);
+      console.warn('[Leaderboard] Cloud fetch failed, using local saves & legends:', e);
     }
 
-    const list = Object.values(localMap);
+    const list = Object.values(playerMap);
 
     // Ranking algorithm:
     // 1. highestLevel (descending)
