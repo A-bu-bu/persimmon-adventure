@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -16,11 +16,12 @@
   <link rel="icon" type="image/png" href="./icons/favicon.png">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   
-    <!-- Firebase SDK (Compat) -->
+  <!-- Firebase SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./css/style.css?v=21">
+  <link rel="stylesheet" href="./css/style.css?v=22">
 </head>
 <body>
   <div id="app">
@@ -147,107 +148,47 @@
       </div>
     </div>
 
-        <!-- PROFILE & STATS MODAL (?犖?啁蜀閰喟敦??璁?& 銝???璁? -->
+    <!-- PROFILE & STATS MODAL (個人戰績詳細排行榜 & 全球世界排行榜) -->
     <div id="modal-profile" class="overlay-modal" style="display: none;">
       <div class="modal-content" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
         
         <!-- Tab navigation -->
         <div class="leaderboard-tabs">
-          <button id="tab-profile-personal" class="leaderboard-tab-btn active">? ?犖??啁蜀</button>
-          <button id="tab-profile-world" class="leaderboard-tab-btn">?? ?函??拙振銝???璁?/button>
+          <button id="tab-profile-personal" class="leaderboard-tab-btn active">👤 個人冒險戰績</button>
+          <button id="tab-profile-world" class="leaderboard-tab-btn">🌍 全球玩家世界排行榜</button>
         </div>
 
-        <!-- TAB 1: ?犖?啁蜀 -->
+        <!-- TAB 1: 個人戰績 -->
         <div id="tab-content-personal" class="tab-content">
-          <h1 class="game-title" style="font-size: 22px; color: #ffd700; margin: 10px 0 14px;">?? ?犖??啁蜀璁株亳璁?/h1>
+          <h1 class="game-title" style="font-size: 22px; color: #ffd700; margin: 10px 0 14px;">📊 個人冒險戰績榮譽榜</h1>
           
           <div class="profile-stats-grid">
             <div class="profile-stat-box">
-              <div class="stat-label">? ?ㄚ?迂</div>
-              <div id="profile-stat-name" class="stat-value">?撠?憯?/div>
+              <div class="stat-label">👤 勇士名稱</div>
+              <div id="profile-stat-name" class="stat-value">背柿小勇士</div>
             </div>
             <div class="profile-stat-box">
-              <div class="stat-label">?? 蝝舐?蝮質???(??馳)</div>
-              <div id="profile-stat-coins" class="stat-value" style="color: #a3ff44;"><!-- PROFILE & STATS MODAL (個人戰績詳細排行榜) -->
-    <div id="modal-profile" class="overlay-modal" style="display: none;">
-      <div class="modal-content" style="max-width: 660px; max-height: 90vh; overflow-y: auto;">
-        <h1 class="game-title" style="font-size: 24px; color: #ffd700;">📊 個人冒險戰績榮譽榜</h1>
-        
-        <div class="profile-stats-grid">
-          <div class="profile-stat-box">
-            <div class="stat-label">👤 勇士名稱</div>
-            <div id="profile-stat-name" class="stat-value">背柿小勇士</div>
-          </div>
-          <div class="profile-stat-box">
-            <div class="stat-label">🪙 累積總資產 (甜柿金幣)</div>
-            <div id="profile-stat-coins" class="stat-value" style="color: #a3ff44;">$0</div>
-          </div>
-          <div class="profile-stat-box">
-            <div class="stat-label">🚩 最高抵達關卡</div>
-            <div id="profile-stat-level" class="stat-value">第 1 關</div>
-          </div>
-          <div class="profile-stat-box">
-            <div class="stat-label">🏆 主線總得分累計</div>
-            <div id="profile-stat-totalscore" class="stat-value">0 分</div>
-          </div>
-        </div>
-
-        <!-- 各主線關卡歷史最高分 -->
-        <h3 style="color: #ffaa00; font-size: 15px; margin: 16px 0 6px; text-align: left;">🗺️ 主線 10 大關卡歷史最高得分紀錄</h3>
-        <table class="scores-table">
-          <thead>
-            <tr>
-              <th>關卡名稱</th>
-              <th>通關狀態</th>
-              <th>歷史最高分</th>
-            </tr>
-          </thead>
-          <tbody id="profile-level-scores-body">
-            <!-- Populated by JavaScript -->
-          </tbody>
-        </table>
-
-        <!-- 10 款迷你遊戲最高分 -->
-        <h3 style="color: #ffd700; font-size: 15px; margin: 14px 0 6px; text-align: left;">🎮 10 大特色迷你遊戲歷史最佳成績</h3>
-        <table class="scores-table">
-          <thead>
-            <tr>
-              <th>迷你遊戲</th>
-              <th>解鎖條件</th>
-              <th>歷史最高分</th>
-            </tr>
-          </thead>
-          <tbody id="profile-minigame-scores-body">
-            <!-- Populated by JavaScript -->
-          </tbody>
-        </table>
-
-        <div class="btn-group" style="margin-top: 16px;">
-          <button id="btn-close-profile" class="secondary-btn">關閉戰績榜</button>
-        </div>
-      </div>
-    </div>
-
-    </div>
+              <div class="stat-label">🪙 累積總資產 (甜柿金幣)</div>
+              <div id="profile-stat-coins" class="stat-value" style="color: #a3ff44;">$0</div>
             </div>
             <div class="profile-stat-box">
-              <div class="stat-label">? ?擃????/div>
-              <div id="profile-stat-level" class="stat-value">蝚?1 ??/div>
+              <div class="stat-label">🚩 最高抵達關卡</div>
+              <div id="profile-stat-level" class="stat-value">第 1 關</div>
             </div>
             <div class="profile-stat-box">
-              <div class="stat-label">?? 銝餌?蝮賢??敞閮?/div>
-              <div id="profile-stat-totalscore" class="stat-value">0 ??/div>
+              <div class="stat-label">🏆 主線總得分累計</div>
+              <div id="profile-stat-totalscore" class="stat-value">0 分</div>
             </div>
           </div>
 
-          <!-- ?蜓蝺??⊥風?脫?擃? -->
-          <h3 style="color: #ffaa00; font-size: 15px; margin: 16px 0 6px; text-align: left;">?儭?銝餌? 10 憭折??⊥風?脫?擃?????/h3>
+          <!-- 各主線關卡歷史最高分 -->
+          <h3 style="color: #ffaa00; font-size: 15px; margin: 16px 0 6px; text-align: left;">🗺️ 主線 10 大關卡歷史最高得分紀錄</h3>
           <table class="scores-table">
             <thead>
               <tr>
-                <th>??迂</th>
-                <th>?????/th>
-                <th>甇瑕?擃?</th>
+                <th>關卡名稱</th>
+                <th>通關狀態</th>
+                <th>歷史最高分</th>
               </tr>
             </thead>
             <tbody id="profile-level-scores-body">
@@ -255,14 +196,14 @@
             </tbody>
           </table>
 
-          <!-- 10 甈曇蕙雿??脫?擃? -->
-          <h3 style="color: #ffd700; font-size: 15px; margin: 14px 0 6px; text-align: left;">? 10 憭抒?脰蕙雿??脫風?脫?雿單?蝮?/h3>
+          <!-- 10 款迷你遊戲最高分 -->
+          <h3 style="color: #ffd700; font-size: 15px; margin: 14px 0 6px; text-align: left;">🎮 10 大特色迷你遊戲歷史最佳成績</h3>
           <table class="scores-table">
             <thead>
               <tr>
-                <th>餈瑚??</th>
-                <th>閫??璇辣</th>
-                <th>甇瑕?擃?</th>
+                <th>迷你遊戲</th>
+                <th>解鎖條件</th>
+                <th>歷史最高分</th>
               </tr>
             </thead>
             <tbody id="profile-minigame-scores-body">
@@ -271,29 +212,30 @@
           </table>
         </div>
 
-        <!-- TAB 2: 銝???璁?(World Leaderboard) -->
+        <!-- TAB 2: 世界排行榜 (World Leaderboard) -->
         <div id="tab-content-world" class="tab-content" style="display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0 12px;">
-            <h1 class="game-title" style="font-size: 22px; color: #ffd700; margin: 0;">?? ?函??摰嗡???銵?</h1>
-            <button id="btn-refresh-world-leaderboard" class="secondary-btn" style="padding: 6px 14px; font-size: 12px;">?? ??渡?</button>
+            <h1 class="game-title" style="font-size: 22px; color: #ffd700; margin: 0;">🌍 全球冒險家世界排行榜</h1>
+            <button id="btn-refresh-world-leaderboard" class="secondary-btn" style="padding: 6px 14px; font-size: 12px;">🔄 重新整理</button>
           </div>
           <p id="world-leaderboard-subtitle" style="color: #aaa; font-size: 12px; margin-bottom: 12px; text-align: left;">
-            ?單???? Firebase ?脩垢鞈?摨恬??舐蜇?函???摰嗥???啁蜀嚗?          </p>
+            即時連線 Firebase 雲端資料庫，匯總全球所有玩家的冒險戰績！
+          </p>
 
           <div id="world-leaderboard-loading" style="display: none; padding: 30px; color: #ffd700; font-size: 16px;">
-            ??甇?????函??脩垢鞈?摨怠?敺??唳?銵?...
+            ⏳ 正在連線全球雲端資料庫取得最新排行榜...
           </div>
 
           <div style="overflow-x: auto;">
             <table class="scores-table world-scores-table">
               <thead>
                 <tr>
-                  <th style="width: 55px;">??</th>
-                  <th>?ㄚ?迂</th>
-                  <th>?擃???/th>
-                  <th>銝餌?蝮賢???/th>
-                  <th>??馳</th>
-                  <th>撠??脩蜇??/th>
+                  <th style="width: 55px;">排名</th>
+                  <th>勇士名稱</th>
+                  <th>最高關卡</th>
+                  <th>主線總得分</th>
+                  <th>甜柿金幣</th>
+                  <th>小遊戲總分</th>
                 </tr>
               </thead>
               <tbody id="world-leaderboard-body">
@@ -304,7 +246,7 @@
         </div>
 
         <div class="btn-group" style="margin-top: 16px;">
-          <button id="btn-close-profile" class="secondary-btn">???啁蜀璁?/button>
+          <button id="btn-close-profile" class="secondary-btn">關閉戰績榜</button>
         </div>
       </div>
     </div>
@@ -462,6 +404,6 @@
   </div>
 
   <!-- Game Scripts -->
-  <script type="module" src="./js/main.js?v=21"></script>
+  <script type="module" src="./js/main.js?v=22"></script>
 </body>
 </html>
